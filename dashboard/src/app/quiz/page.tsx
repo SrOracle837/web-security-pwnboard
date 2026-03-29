@@ -39,6 +39,16 @@ export default function QuizPage() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [results, setResults] = useState<{ questionId: string; correct: boolean; xp: number }[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [copiedExplain, setCopiedExplain] = useState(false);
+
+  function copyExplainPrompt(q: QuizQuestion) {
+    const topicName = data?.skillTree.topics[q.topic]?.name ?? q.topic;
+    const prompt = `I got this web security quiz question wrong and want to understand it deeply.\n\nTopic: ${topicName}\nQuestion: ${q.question}\nCorrect answer: ${q.answer}\n\nExplain why the correct answer is right, why each wrong answer fails, and give me a real-world example of this vulnerability. Help me build intuition so I don't get this wrong again.`;
+    navigator.clipboard.writeText(prompt);
+    window.open("https://claude.ai/new", "_blank");
+    setCopiedExplain(true);
+    setTimeout(() => setCopiedExplain(false), 2000);
+  }
 
   const fetchData = useCallback(() => {
     fetch("/api/state").then((r) => r.json()).then(setData).catch(console.error);
@@ -290,9 +300,18 @@ export default function QuizPage() {
             </div>
           </div>
 
+          {!correct && (
+            <button
+              onClick={() => copyExplainPrompt(q)}
+              className="w-full mt-3 text-xs py-2.5 text-muted border border-border rounded-xl hover:border-accent/30 hover:text-foreground transition-all"
+            >
+              {copiedExplain ? "Copied! Paste in Claude to learn more" : "Ask AI to explain this deeper"}
+            </button>
+          )}
+
           <button
             onClick={nextQuestion}
-            className="w-full mt-5 text-sm py-3 bg-accent text-white rounded-xl hover:bg-accent-light transition-colors font-medium"
+            className={`w-full ${!correct ? "mt-2" : "mt-5"} text-sm py-3 bg-accent text-white rounded-xl hover:bg-accent-light transition-colors font-medium`}
           >
             {currentIdx + 1 >= questions.length ? "See Results" : "Next"}
           </button>

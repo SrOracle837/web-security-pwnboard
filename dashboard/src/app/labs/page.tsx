@@ -43,6 +43,33 @@ export default function LabsPage() {
   const [showCompleted, setShowCompleted] = useState(true);
   const [logging, setLogging] = useState<string | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: "success" | "info" } | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
+
+  async function handleUndo(labId: string) {
+    try {
+      const res = await fetch("/api/log", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ labId }),
+      });
+      if (res.ok) {
+        setToast({ msg: "Lab unmarked", type: "info" });
+        fetchData();
+      }
+    } catch {
+      setToast({ msg: "Failed to undo", type: "info" });
+    }
+    setTimeout(() => setToast(null), 3000);
+  }
+
+  function copyHintPrompt(lab: Lab) {
+    const topicName = data?.skillTree.topics[lab.topic]?.name ?? lab.topic;
+    const prompt = `I'm working on a PortSwigger Web Security Academy lab and need a hint.\n\nLab: "${lab.title}"\nTopic: ${topicName}\nDifficulty: ${lab.difficulty}\n\nGive me a progressive hint — don't spoil the answer. Start with the general approach, what vulnerability class to look for, and where to start. If I ask again, give a more specific hint.`;
+    navigator.clipboard.writeText(prompt);
+    window.open("https://claude.ai/new", "_blank");
+    setCopied(lab.id);
+    setTimeout(() => setCopied(null), 2000);
+  }
 
   const fetchData = useCallback(() => {
     fetch("/api/state").then((r) => r.json()).then(setData).catch(console.error);
@@ -198,12 +225,19 @@ export default function LabsPage() {
                         isDone ? "opacity-50" : ""
                       }`}
                     >
-                      {/* Checkbox */}
-                      <div className={`w-5 h-5 rounded-md flex items-center justify-center text-xs border ${
-                        isDone ? "bg-success/20 border-success/40 text-success" : "border-border"
-                      }`}>
+                      {/* Toggle */}
+                      <button
+                        onClick={() => isDone ? handleUndo(lab.id) : handleLog(lab.id)}
+                        disabled={logging === lab.id}
+                        className={`w-5 h-5 rounded-md flex items-center justify-center text-xs border transition-all ${
+                          isDone
+                            ? "bg-success/20 border-success/40 text-success hover:bg-danger/10 hover:border-danger/40 hover:text-danger"
+                            : "border-border hover:border-accent/40 hover:bg-accent/5"
+                        }`}
+                        title={isDone ? "Click to undo" : "Click to mark done"}
+                      >
                         {isDone && "\u2713"}
-                      </div>
+                      </button>
 
                       {/* Difficulty */}
                       <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${diffBadge[lab.difficulty]}`}>
@@ -215,6 +249,13 @@ export default function LabsPage() {
 
                       {/* Actions */}
                       <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          onClick={() => copyHintPrompt(lab)}
+                          className="text-xs text-muted hover:text-foreground transition-colors px-2.5 py-1.5 rounded-lg border border-border hover:border-accent/30"
+                          title="Copy a hint prompt for Claude"
+                        >
+                          {copied === lab.id ? "Copied!" : "Ask AI"}
+                        </button>
                         {lab.url && (
                           <a
                             href={lab.url}
@@ -234,7 +275,7 @@ export default function LabsPage() {
                             {logging === lab.id ? "..." : "Done"}
                           </button>
                         ) : (
-                          <span className="text-xs text-success/50 px-3">\u2713</span>
+                          <span className="text-xs text-success/50 px-3">{"\u2713"}</span>
                         )}
                       </div>
                     </div>

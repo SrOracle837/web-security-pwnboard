@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "created_at": "",
+  "player": {
+    "level": 1,
+    "title": "Script Kiddie",
+    "total_xp": 0,
+    "streak": {
+      "current": 0,
+      "longest": 0,
+      "last_active": null
+    }
+  },
+  "progress": {},
+  "achievements": {
+    "earned": [],
+    "hidden_progress": {}
+  },
+  "quiz_state": {
+    "questions": {}
+  },
+  "challenges": {
+    "daily": { "date": null, "challenge": null, "completed": false },
+    "weekly": { "week": null, "challenge": null, "completed": false },
+    "daily_history": { "completed_count": 0 },
+    "weekly_history": { "completed_count": 0 }
+  },
+  "hints_used_per_lab": {},
+  "labs_without_hints": 0,
+  "activity_log": [],
+  "stats": {
+    "total_labs": 0,
+    "total_quizzes": 0,
+    "hints_used": 0,
+    "sessions": 0,
+    "first_quiz_taken": false
+  }
+}

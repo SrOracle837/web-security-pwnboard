@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #f4f1ec;
+  --color-surface: #f4f1ec;
+  --color-surface-light: #edeae4;
+  --color-card: #faf8f5;
+  --color-accent: #c0533e;
+  --color-accent-light: #d4634e;
+  --color-success: #548a6a;
+  --color-success-dim: #467a5c;
+  --color-warn: #c07a3e;
+  --color-danger: #c0533e;
+  --color-foreground: #2c2926;
+  --color-muted: #9c9590;
+  --color-subtle: #eae6e0;
+  --color-border: #ddd8d0;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+  --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+
+@keyframes progress-fill {
+  from { width: 0%; }
+}
+
+.animate-progress {
+  animation: progress-fill 0.8s ease-out;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
+}

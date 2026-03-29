@@ -1,0 +1,284 @@
+# Skill Tree — Topic Graph & Prerequisites
+# Defines which topics are available, their categories, and unlock conditions
+
+categories:
+  server-side:
+    label: "Server-Side Vulnerabilities"
+    color: "#ef4444"
+  client-side:
+    label: "Client-Side Vulnerabilities"
+    color: "#3b82f6"
+  advanced:
+    label: "Advanced Topics"
+    color: "#a855f7"
+
+topics:
+  # ── SERVER-SIDE (Starter Topics) ──────────────────────────
+  sql-injection:
+    name: "SQL Injection"
+    category: server-side
+    starter: true
+    labs: { apprentice: 6, practitioner: 10, expert: 2 }
+    description: "Manipulate SQL queries to access or modify database data"
+
+  authentication:
+    name: "Authentication"
+    category: server-side
+    starter: true
+    labs: { apprentice: 4, practitioner: 8, expert: 2 }
+    description: "Bypass login mechanisms and exploit authentication flaws"
+
+  path-traversal:
+    name: "Path Traversal"
+    category: server-side
+    starter: true
+    labs: { apprentice: 3, practitioner: 3, expert: 0 }
+    description: "Access files outside the intended directory"
+
+  command-injection:
+    name: "Command Injection"
+    category: server-side
+    starter: true
+    labs: { apprentice: 2, practitioner: 3, expert: 0 }
+    description: "Execute arbitrary OS commands on the server"
+
+  information-disclosure:
+    name: "Information Disclosure"
+    category: server-side
+    starter: true
+    labs: { apprentice: 2, practitioner: 3, expert: 0 }
+    description: "Find sensitive data leaked by the application"
+
+  access-control:
+    name: "Access Control"
+    category: server-side
+    starter: true
+    labs: { apprentice: 5, practitioner: 7, expert: 1 }
+    description: "Escalate privileges and bypass authorization checks"
+
+  # ── SERVER-SIDE (Unlockable) ──────────────────────────────
+  business-logic:
+    name: "Business Logic Vulnerabilities"
+    category: server-side
+    starter: false
+    prerequisites:
+      - { topic: information-disclosure, min_apprentice: 2 }
+    labs: { apprentice: 4, practitioner: 6, expert: 1 }
+    description: "Exploit flawed application logic and assumptions"
+
+  file-upload:
+    name: "File Upload Vulnerabilities"
+    category: server-side
+    starter: false
+    prerequisites:
+      - { topic: access-control, min_apprentice: 3 }
+    labs: { apprentice: 2, practitioner: 4, expert: 1 }
+    description: "Upload malicious files to achieve code execution"
+
+  race-conditions:
+    name: "Race Conditions"
+    category: server-side
+    starter: false
+    prerequisites:
+      - { topic: file-upload, min_apprentice: 2 }
+    labs: { apprentice: 2, practitioner: 3, expert: 1 }
+    description: "Exploit time-of-check to time-of-use vulnerabilities"
+
+  ssrf:
+    name: "Server-Side Request Forgery (SSRF)"
+    category: server-side
+    starter: false
+    prerequisites:
+      - { topic: access-control, min_apprentice: 3 }
+    labs: { apprentice: 2, practitioner: 4, expert: 1 }
+    description: "Make the server send requests to unintended locations"
+
+  xxe:
+    name: "XXE Injection"
+    category: server-side
+    starter: false
+    prerequisites:
+      - { topic: sql-injection, min_apprentice: 3 }
+    labs: { apprentice: 3, practitioner: 5, expert: 1 }
+    description: "Exploit XML parsers to read files and perform SSRF"
+
+  nosql-injection:
+    name: "NoSQL Injection"
+    category: server-side
+    starter: false
+    prerequisites:
+      - { topic: sql-injection, min_apprentice: 3 }
+    labs: { apprentice: 2, practitioner: 2, expert: 0 }
+    description: "Inject into NoSQL database queries"
+
+  api-testing:
+    name: "API Testing"
+    category: server-side
+    starter: false
+    prerequisites:
+      - { topic: sql-injection, min_apprentice: 3 }
+      - { topic: authentication, min_apprentice: 3 }
+      - { topic: access-control, min_apprentice: 3 }
+    prerequisite_mode: "any_3_server_side_topics"
+    labs: { apprentice: 2, practitioner: 3, expert: 0 }
+    description: "Find and exploit vulnerabilities in REST APIs"
+
+  web-cache-deception:
+    name: "Web Cache Deception"
+    category: server-side
+    starter: false
+    prerequisites:
+      - { topic: path-traversal, min_apprentice: 2 }
+    labs: { apprentice: 1, practitioner: 3, expert: 1 }
+    description: "Trick caches into storing sensitive responses"
+
+  # ── CLIENT-SIDE (Starter Topic: XSS) ─────────────────────
+  xss:
+    name: "Cross-Site Scripting (XSS)"
+    category: client-side
+    starter: true
+    labs: { apprentice: 9, practitioner: 17, expert: 4 }
+    description: "Inject malicious scripts into web pages"
+
+  csrf:
+    name: "Cross-Site Request Forgery (CSRF)"
+    category: client-side
+    starter: false
+    prerequisites:
+      - { topic: xss, min_apprentice: 3 }
+    labs: { apprentice: 4, practitioner: 7, expert: 1 }
+    description: "Force users to perform unintended actions"
+
+  cors:
+    name: "Cross-Origin Resource Sharing (CORS)"
+    category: client-side
+    starter: false
+    prerequisites:
+      - { topic: csrf, min_apprentice: 3 }
+    labs: { apprentice: 1, practitioner: 2, expert: 0 }
+    description: "Exploit misconfigured CORS policies"
+
+  clickjacking:
+    name: "Clickjacking"
+    category: client-side
+    starter: false
+    prerequisites:
+      - { topic: csrf, min_apprentice: 3 }
+    labs: { apprentice: 2, practitioner: 3, expert: 0 }
+    description: "Trick users into clicking hidden UI elements"
+
+  dom-based:
+    name: "DOM-Based Vulnerabilities"
+    category: client-side
+    starter: false
+    prerequisites:
+      - { topic: xss, min_apprentice: 5 }
+    labs: { apprentice: 2, practitioner: 4, expert: 1 }
+    description: "Exploit client-side JavaScript DOM manipulation"
+
+  websockets:
+    name: "WebSockets"
+    category: client-side
+    starter: false
+    prerequisites:
+      - { topic: xss, min_apprentice: 3 }
+    labs: { apprentice: 1, practitioner: 2, expert: 0 }
+    description: "Attack WebSocket connections and messages"
+
+  # ── ADVANCED ──────────────────────────────────────────────
+  ssti:
+    name: "Server-Side Template Injection"
+    category: advanced
+    starter: false
+    prerequisites:
+      - { topic: command-injection, min_apprentice: 2 }
+    min_level: 8
+    labs: { apprentice: 2, practitioner: 4, expert: 1 }
+    description: "Inject into server-side template engines for RCE"
+
+  insecure-deserialization:
+    name: "Insecure Deserialization"
+    category: advanced
+    starter: false
+    prerequisites:
+      - { topic: ssti, min_apprentice: 2 }
+    min_level: 8
+    labs: { apprentice: 3, practitioner: 5, expert: 2 }
+    description: "Exploit deserialization to achieve code execution"
+
+  oauth:
+    name: "OAuth Authentication"
+    category: advanced
+    starter: false
+    prerequisites:
+      - { topic: authentication, min_apprentice: 3 }
+    labs: { apprentice: 2, practitioner: 3, expert: 1 }
+    description: "Exploit OAuth flows and misconfigurations"
+
+  jwt:
+    name: "JWT Attacks"
+    category: advanced
+    starter: false
+    prerequisites:
+      - { topic: oauth, min_apprentice: 2 }
+    labs: { apprentice: 2, practitioner: 4, expert: 2 }
+    description: "Forge and manipulate JSON Web Tokens"
+
+  prototype-pollution:
+    name: "Prototype Pollution"
+    category: advanced
+    starter: false
+    prerequisites:
+      - { topic: dom-based, min_apprentice: 2 }
+    min_level: 8
+    labs: { apprentice: 3, practitioner: 5, expert: 2 }
+    description: "Pollute JavaScript object prototypes for exploitation"
+
+  http-request-smuggling:
+    name: "HTTP Request Smuggling"
+    category: advanced
+    starter: false
+    prerequisites:
+      - { topic: ssrf, min_apprentice: 2 }
+    min_level: 8
+    labs: { apprentice: 5, practitioner: 12, expert: 5 }
+    description: "Exploit HTTP parsing discrepancies between servers"
+
+  web-cache-poisoning:
+    name: "Web Cache Poisoning"
+    category: advanced
+    starter: false
+    prerequisites:
+      - { topic: xss, min_apprentice: 5 }
+      - { topic: web-cache-deception, min_apprentice: 1 }
+    min_level: 8
+    labs: { apprentice: 3, practitioner: 7, expert: 3 }
+    description: "Poison web caches to deliver malicious responses"
+
+  http-host-header:
+    name: "HTTP Host Header Attacks"
+    category: advanced
+    starter: false
+    prerequisites:
+      - { topic: ssrf, min_apprentice: 2 }
+    labs: { apprentice: 2, practitioner: 4, expert: 1 }
+    description: "Exploit the Host header for routing attacks"
+
+  graphql:
+    name: "GraphQL API Vulnerabilities"
+    category: advanced
+    starter: false
+    prerequisites:
+      - { topic: api-testing, min_apprentice: 2 }
+    labs: { apprentice: 2, practitioner: 3, expert: 0 }
+    description: "Exploit GraphQL introspection and query flaws"
+
+  web-llm-attacks:
+    name: "Web LLM Attacks"
+    category: advanced
+    starter: false
+    prerequisites: []
+    prerequisite_mode: "any_5_topics_at_practitioner"
+    min_level: 8
+    labs: { apprentice: 1, practitioner: 3, expert: 0 }
+    description: "Exploit LLM integrations in web applications"

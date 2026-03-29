@@ -1,0 +1,14 @@
+# Dependencies
+dashboard/node_modules/
+dashboard/.next/
+
+# State (personal progress — don't commit)
+state/player.json
+
+# OS
+.DS_Store
+*.swp
+
+# IDE
+.vscode/
+.idea/

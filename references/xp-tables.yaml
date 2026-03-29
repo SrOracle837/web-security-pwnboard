@@ -1,0 +1,50 @@
+# XP & Leveling Configuration
+# Used by both the Claude Code skill and the Next.js dashboard
+
+xp_rewards:
+  lab_completion:
+    apprentice: 100
+    practitioner: 250
+    expert: 500
+  quiz:
+    correct_answer: 25
+    perfect_quiz_bonus: 50  # bonus for 100% on a quiz session
+  challenges:
+    daily_completed: 150
+    weekly_completed: 500
+  achievements:
+    bronze: 50
+    silver: 100
+    gold: 200
+
+streak_multipliers:
+  - { min_days: 1, max_days: 2, multiplier: 1.0 }
+  - { min_days: 3, max_days: 6, multiplier: 1.2 }
+  - { min_days: 7, max_days: 13, multiplier: 1.5 }
+  - { min_days: 14, max_days: 29, multiplier: 1.75 }
+  - { min_days: 30, max_days: 999, multiplier: 2.0 }
+
+levels:
+  - { level: 1, title: "Script Kiddie", xp_required: 0 }
+  - { level: 2, title: "Curious Hacker", xp_required: 200 }
+  - { level: 3, title: "Bug Hunter", xp_required: 600 }
+  - { level: 4, title: "Vulnerability Scout", xp_required: 1200 }
+  - { level: 5, title: "Exploit Apprentice", xp_required: 2000 }
+  - { level: 6, title: "Payload Crafter", xp_required: 3200 }
+  - { level: 7, title: "Attack Vectorist", xp_required: 4800 }
+  - { level: 8, title: "Security Analyst", xp_required: 7000 }
+  - { level: 9, title: "Penetration Tester", xp_required: 10000 }
+  - { level: 10, title: "Red Team Operator", xp_required: 14000 }
+  - { level: 11, title: "Exploit Developer", xp_required: 19000 }
+  - { level: 12, title: "Security Researcher", xp_required: 25000 }
+  - { level: 13, title: "Zero-Day Hunter", xp_required: 32000 }
+  - { level: 14, title: "Pentest Master", xp_required: 40000 }
+  - { level: 15, title: "Pentest Legend", xp_required: 50000 }
+
+gates:
+  practitioner_unlock_level: 4
+  expert_unlock_level: 8
+
+hint_costs:
+  first_hint: 0      # free
+  subsequent: 25      # XP per additional hint

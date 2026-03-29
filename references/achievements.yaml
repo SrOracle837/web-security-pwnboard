@@ -1,0 +1,327 @@
+# Achievement Definitions
+# Each achievement has an id, name, description, category, tier (bronze/silver/gold), and criteria
+
+achievements:
+  # ── PROGRESSION ─────────────────────────────────────────
+  - id: first-blood
+    name: "First Blood"
+    description: "Complete your very first lab"
+    category: progression
+    tier: bronze
+    icon: drop
+    criteria: { type: total_labs, count: 1 }
+
+  - id: getting-started
+    name: "Getting Started"
+    description: "Complete 10 labs"
+    category: progression
+    tier: bronze
+    icon: rocket
+    criteria: { type: total_labs, count: 10 }
+
+  - id: making-progress
+    name: "Making Progress"
+    description: "Complete 25 labs"
+    category: progression
+    tier: silver
+    icon: chart
+    criteria: { type: total_labs, count: 25 }
+
+  - id: halfway-there
+    name: "Halfway There"
+    description: "Complete 100 labs"
+    category: progression
+    tier: gold
+    icon: flag
+    criteria: { type: total_labs, count: 100 }
+
+  - id: completionist
+    name: "Completionist"
+    description: "Complete every single lab"
+    category: progression
+    tier: gold
+    icon: crown
+    criteria: { type: all_labs_complete }
+
+  - id: bscp-ready
+    name: "BSCP Ready"
+    description: "Complete all Apprentice and Practitioner labs"
+    category: progression
+    tier: gold
+    icon: certificate
+    criteria: { type: all_apprentice_and_practitioner_complete }
+
+  - id: level-5
+    name: "Rising Threat"
+    description: "Reach Level 5"
+    category: progression
+    tier: bronze
+    icon: arrow-up
+    criteria: { type: min_level, level: 5 }
+
+  - id: level-10
+    name: "Red Team Material"
+    description: "Reach Level 10"
+    category: progression
+    tier: silver
+    icon: shield
+    criteria: { type: min_level, level: 10 }
+
+  - id: level-15
+    name: "Legendary"
+    description: "Reach Level 15 — Pentest Legend"
+    category: progression
+    tier: gold
+    icon: star
+    criteria: { type: min_level, level: 15 }
+
+  # ── STREAKS ─────────────────────────────────────────────
+  - id: consistent
+    name: "Consistent"
+    description: "Maintain a 3-day streak"
+    category: streaks
+    tier: bronze
+    icon: flame
+    criteria: { type: streak, days: 3 }
+
+  - id: dedicated
+    name: "Dedicated"
+    description: "Maintain a 7-day streak"
+    category: streaks
+    tier: bronze
+    icon: flame
+    criteria: { type: streak, days: 7 }
+
+  - id: relentless
+    name: "Relentless"
+    description: "Maintain a 30-day streak"
+    category: streaks
+    tier: silver
+    icon: flame
+    criteria: { type: streak, days: 30 }
+
+  - id: obsessed
+    name: "Obsessed"
+    description: "Maintain a 100-day streak"
+    category: streaks
+    tier: gold
+    icon: flame
+    criteria: { type: streak, days: 100 }
+
+  # ── STYLE ───────────────────────────────────────────────
+  - id: no-training-wheels
+    name: "No Training Wheels"
+    description: "Complete 10 labs without using any hints"
+    category: style
+    tier: silver
+    icon: brain
+    criteria: { type: labs_without_hints, count: 10 }
+
+  - id: speed-demon
+    name: "Speed Demon"
+    description: "Log 3 labs in a single day"
+    category: style
+    tier: bronze
+    icon: lightning
+    criteria: { type: labs_in_one_day, count: 3 }
+
+  - id: marathon
+    name: "Marathon Runner"
+    description: "Log 5 labs in a single day"
+    category: style
+    tier: silver
+    icon: lightning
+    criteria: { type: labs_in_one_day, count: 5 }
+
+  - id: quiz-master
+    name: "Quiz Master"
+    description: "Score 100% on a 10-question quiz"
+    category: style
+    tier: gold
+    icon: check-circle
+    criteria: { type: perfect_quiz, min_questions: 10 }
+
+  - id: polyglot
+    name: "Polyglot"
+    description: "Complete labs in 5 different topics"
+    category: style
+    tier: bronze
+    icon: globe
+    criteria: { type: topics_with_labs, count: 5 }
+
+  - id: renaissance-hacker
+    name: "Renaissance Hacker"
+    description: "Complete labs in 15 different topics"
+    category: style
+    tier: silver
+    icon: globe
+    criteria: { type: topics_with_labs, count: 15 }
+
+  - id: deep-diver
+    name: "Deep Diver"
+    description: "Complete ALL labs in any single topic"
+    category: style
+    tier: gold
+    icon: anchor
+    criteria: { type: topic_fully_complete, count: 1 }
+
+  - id: daily-warrior
+    name: "Daily Warrior"
+    description: "Complete 10 daily challenges"
+    category: style
+    tier: bronze
+    icon: sun
+    criteria: { type: dailies_completed, count: 10 }
+
+  - id: weekly-champion
+    name: "Weekly Champion"
+    description: "Complete 4 weekly challenges"
+    category: style
+    tier: silver
+    icon: calendar
+    criteria: { type: weeklies_completed, count: 4 }
+
+  # ── TOPIC MASTERY (one per topic) ───────────────────────
+  - id: master-sql-injection
+    name: "SQLi Slayer"
+    description: "Complete all Apprentice + Practitioner SQL Injection labs"
+    category: topic-mastery
+    tier: gold
+    icon: database
+    criteria: { type: topic_mastery, topic: sql-injection }
+
+  - id: master-xss
+    name: "XSS Ninja"
+    description: "Complete all Apprentice + Practitioner XSS labs"
+    category: topic-mastery
+    tier: gold
+    icon: code
+    criteria: { type: topic_mastery, topic: xss }
+
+  - id: master-authentication
+    name: "Auth Breaker"
+    description: "Complete all Apprentice + Practitioner Authentication labs"
+    category: topic-mastery
+    tier: gold
+    icon: key
+    criteria: { type: topic_mastery, topic: authentication }
+
+  - id: master-csrf
+    name: "CSRF Crusher"
+    description: "Complete all Apprentice + Practitioner CSRF labs"
+    category: topic-mastery
+    tier: gold
+    icon: repeat
+    criteria: { type: topic_mastery, topic: csrf }
+
+  - id: master-access-control
+    name: "Privilege Escalator"
+    description: "Complete all Apprentice + Practitioner Access Control labs"
+    category: topic-mastery
+    tier: gold
+    icon: lock-open
+    criteria: { type: topic_mastery, topic: access-control }
+
+  - id: master-ssrf
+    name: "Server Whisperer"
+    description: "Complete all Apprentice + Practitioner SSRF labs"
+    category: topic-mastery
+    tier: gold
+    icon: server
+    criteria: { type: topic_mastery, topic: ssrf }
+
+  - id: master-xxe
+    name: "XML Exploiter"
+    description: "Complete all Apprentice + Practitioner XXE labs"
+    category: topic-mastery
+    tier: gold
+    icon: file-code
+    criteria: { type: topic_mastery, topic: xxe }
+
+  - id: master-request-smuggling
+    name: "The Smuggler"
+    description: "Complete all Apprentice + Practitioner HTTP Request Smuggling labs"
+    category: topic-mastery
+    tier: gold
+    icon: truck
+    criteria: { type: topic_mastery, topic: http-request-smuggling }
+
+  - id: master-jwt
+    name: "Token Forger"
+    description: "Complete all Apprentice + Practitioner JWT labs"
+    category: topic-mastery
+    tier: gold
+    icon: key
+    criteria: { type: topic_mastery, topic: jwt }
+
+  - id: master-prototype-pollution
+    name: "Prototype Poisoner"
+    description: "Complete all Apprentice + Practitioner Prototype Pollution labs"
+    category: topic-mastery
+    tier: gold
+    icon: atom
+    criteria: { type: topic_mastery, topic: prototype-pollution }
+
+  # ── HIDDEN (revealed on unlock) ─────────────────────────
+  - id: night-owl
+    name: "Night Owl"
+    description: "Log a lab after 11 PM"
+    category: hidden
+    tier: bronze
+    icon: moon
+    hint: "The best hacking happens when the world sleeps..."
+    criteria: { type: lab_after_hour, hour: 23 }
+
+  - id: weekend-warrior
+    name: "Weekend Warrior"
+    description: "Complete labs on both Saturday and Sunday in the same weekend"
+    category: hidden
+    tier: bronze
+    icon: calendar
+    hint: "Some hackers don't take days off..."
+    criteria: { type: weekend_labs }
+
+  - id: comeback-kid
+    name: "Comeback Kid"
+    description: "Return after a 7+ day gap and complete a lab"
+    category: hidden
+    tier: silver
+    icon: refresh
+    hint: "Even legends take breaks..."
+    criteria: { type: return_after_gap, days: 7 }
+
+  - id: the-chainer
+    name: "The Chainer"
+    description: "Complete an Expert-level lab"
+    category: hidden
+    tier: gold
+    icon: link
+    hint: "Master the art of combining multiple vulnerabilities..."
+    criteria: { type: expert_lab_complete }
+
+  - id: first-quiz-ace
+    name: "Natural Talent"
+    description: "Score 100% on your very first quiz attempt"
+    category: hidden
+    tier: silver
+    icon: sparkle
+    hint: "Some people just get it on the first try..."
+    criteria: { type: first_quiz_perfect }
+
+  - id: server-side-sweep
+    name: "Server Slayer"
+    description: "Master all server-side topics"
+    category: hidden
+    tier: gold
+    icon: server
+    hint: "Own every server-side vulnerability class..."
+    criteria: { type: category_mastery, category: server-side }
+
+  - id: client-side-sweep
+    name: "Browser Bender"
+    description: "Master all client-side topics"
+    category: hidden
+    tier: gold
+    icon: monitor
+    hint: "The browser is your playground..."
+    criteria: { type: category_mastery, category: client-side }

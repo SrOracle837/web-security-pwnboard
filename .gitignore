@@ -12,3 +12,12 @@ state/player.json
 # IDE
 .vscode/
 .idea/
+
+# Claude Code
+CLAUDE.md
+AGENTS.md
+dashboard/CLAUDE.md
+dashboard/AGENTS.md
+
+# Next.js default readme (ours is at root)
+dashboard/README.md

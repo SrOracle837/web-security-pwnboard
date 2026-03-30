@@ -1,12 +1,12 @@
 # Web Security Academy -- Lab Catalog
 # Source: https://portswigger.net/web-security
-# Generated: 2026-03-28
-# Total labs: 267 (across 30 vulnerability topics)
+# Generated: 2026-03-29
+# Total labs: 266 (across 30 vulnerability topics)
 
 labs:
 
   # ========================================================================
-  # SQL INJECTION (18 labs: 6a, 10p, 2e)
+  # SQL INJECTION (18 labs: 2a, 16p, 0e)
   # ========================================================================
 
   - id: sql-injection-a1
@@ -21,104 +21,104 @@ labs:
     difficulty: apprentice
     url: "https://portswigger.net/web-security/sql-injection/lab-login-bypass"
 
-  - id: sql-injection-a3
+  - id: sql-injection-p1
     title: "SQL injection attack, querying the database type and version on Oracle"
     topic: sql-injection
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/sql-injection/examining-the-database/lab-querying-database-version-oracle"
 
-  - id: sql-injection-a4
+  - id: sql-injection-p2
     title: "SQL injection attack, querying the database type and version on MySQL and Microsoft"
     topic: sql-injection
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/sql-injection/examining-the-database/lab-querying-database-version-mysql-microsoft"
 
-  - id: sql-injection-a5
+  - id: sql-injection-p3
     title: "SQL injection attack, listing the database contents on non-Oracle databases"
     topic: sql-injection
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/sql-injection/examining-the-database/lab-listing-database-contents-non-oracle"
 
-  - id: sql-injection-a6
+  - id: sql-injection-p4
     title: "SQL injection attack, listing the database contents on Oracle"
     topic: sql-injection
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/sql-injection/examining-the-database/lab-listing-database-contents-oracle"
 
-  - id: sql-injection-p1
+  - id: sql-injection-p5
     title: "SQL injection UNION attack, determining the number of columns returned by the query"
     topic: sql-injection
     difficulty: practitioner
     url: "https://portswigger.net/web-security/sql-injection/union-attacks/lab-determine-number-of-columns"
 
-  - id: sql-injection-p2
+  - id: sql-injection-p6
     title: "SQL injection UNION attack, finding a column containing text"
     topic: sql-injection
     difficulty: practitioner
     url: "https://portswigger.net/web-security/sql-injection/union-attacks/lab-find-column-containing-text"
 
-  - id: sql-injection-p3
+  - id: sql-injection-p7
     title: "SQL injection UNION attack, retrieving data from other tables"
     topic: sql-injection
     difficulty: practitioner
     url: "https://portswigger.net/web-security/sql-injection/union-attacks/lab-retrieve-data-from-other-tables"
 
-  - id: sql-injection-p4
+  - id: sql-injection-p8
     title: "SQL injection UNION attack, retrieving multiple values in a single column"
     topic: sql-injection
     difficulty: practitioner
     url: "https://portswigger.net/web-security/sql-injection/union-attacks/lab-retrieve-multiple-values-in-single-column"
 
-  - id: sql-injection-p5
+  - id: sql-injection-p9
     title: "Blind SQL injection with conditional responses"
     topic: sql-injection
     difficulty: practitioner
     url: "https://portswigger.net/web-security/sql-injection/blind/lab-conditional-responses"
 
-  - id: sql-injection-p6
+  - id: sql-injection-p10
     title: "Blind SQL injection with conditional errors"
     topic: sql-injection
     difficulty: practitioner
     url: "https://portswigger.net/web-security/sql-injection/blind/lab-conditional-errors"
 
-  - id: sql-injection-p7
+  - id: sql-injection-p11
     title: "Visible error-based SQL injection"
     topic: sql-injection
     difficulty: practitioner
     url: "https://portswigger.net/web-security/sql-injection/blind/lab-sql-injection-visible-error-based"
 
-  - id: sql-injection-p8
+  - id: sql-injection-p12
     title: "Blind SQL injection with time delays"
     topic: sql-injection
     difficulty: practitioner
     url: "https://portswigger.net/web-security/sql-injection/blind/lab-time-delays"
 
-  - id: sql-injection-p9
+  - id: sql-injection-p13
     title: "Blind SQL injection with time delays and information retrieval"
     topic: sql-injection
     difficulty: practitioner
     url: "https://portswigger.net/web-security/sql-injection/blind/lab-time-delays-info-retrieval"
 
-  - id: sql-injection-p10
+  - id: sql-injection-p14
+    title: "Blind SQL injection with out-of-band interaction"
+    topic: sql-injection
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/sql-injection/blind/lab-out-of-band"
+
+  - id: sql-injection-p15
+    title: "Blind SQL injection with out-of-band data exfiltration"
+    topic: sql-injection
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/sql-injection/blind/lab-out-of-band-data-exfiltration"
+
+  - id: sql-injection-p16
     title: "SQL injection with filter bypass via XML encoding"
     topic: sql-injection
     difficulty: practitioner
     url: "https://portswigger.net/web-security/sql-injection/lab-sql-injection-with-filter-bypass-via-xml-encoding"
 
-  - id: sql-injection-e1
-    title: "Blind SQL injection with out-of-band interaction"
-    topic: sql-injection
-    difficulty: expert
-    url: "https://portswigger.net/web-security/sql-injection/blind/lab-out-of-band"
-
-  - id: sql-injection-e2
-    title: "Blind SQL injection with out-of-band data exfiltration"
-    topic: sql-injection
-    difficulty: expert
-    url: "https://portswigger.net/web-security/sql-injection/blind/lab-out-of-band-data-exfiltration"
-
   # ========================================================================
-  # AUTHENTICATION (14 labs: 4a, 8p, 2e)
+  # AUTHENTICATION (14 labs: 3a, 9p, 2e)
   # ========================================================================
 
   - id: authentication-a1
@@ -139,74 +139,74 @@ labs:
     difficulty: apprentice
     url: "https://portswigger.net/web-security/authentication/other-mechanisms/lab-password-reset-broken-logic"
 
-  - id: authentication-a4
+  - id: authentication-p1
     title: "Username enumeration via subtly different responses"
     topic: authentication
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/authentication/password-based/lab-username-enumeration-via-subtly-different-responses"
 
-  - id: authentication-p1
+  - id: authentication-p2
     title: "Username enumeration via response timing"
     topic: authentication
     difficulty: practitioner
     url: "https://portswigger.net/web-security/authentication/password-based/lab-username-enumeration-via-response-timing"
 
-  - id: authentication-p2
+  - id: authentication-p3
     title: "Broken brute-force protection, IP block"
     topic: authentication
     difficulty: practitioner
     url: "https://portswigger.net/web-security/authentication/password-based/lab-broken-bruteforce-protection-ip-block"
 
-  - id: authentication-p3
+  - id: authentication-p4
     title: "Username enumeration via account lock"
     topic: authentication
     difficulty: practitioner
     url: "https://portswigger.net/web-security/authentication/password-based/lab-username-enumeration-via-account-lock"
 
-  - id: authentication-p4
+  - id: authentication-p5
     title: "2FA broken logic"
     topic: authentication
     difficulty: practitioner
     url: "https://portswigger.net/web-security/authentication/multi-factor/lab-2fa-broken-logic"
 
-  - id: authentication-p5
+  - id: authentication-p6
     title: "Brute-forcing a stay-logged-in cookie"
     topic: authentication
     difficulty: practitioner
     url: "https://portswigger.net/web-security/authentication/other-mechanisms/lab-brute-forcing-a-stay-logged-in-cookie"
 
-  - id: authentication-p6
+  - id: authentication-p7
     title: "Offline password cracking"
     topic: authentication
     difficulty: practitioner
     url: "https://portswigger.net/web-security/authentication/other-mechanisms/lab-offline-password-cracking"
 
-  - id: authentication-p7
+  - id: authentication-p8
     title: "Password reset poisoning via middleware"
     topic: authentication
     difficulty: practitioner
     url: "https://portswigger.net/web-security/authentication/other-mechanisms/lab-password-reset-poisoning-via-middleware"
 
-  - id: authentication-p8
+  - id: authentication-p9
     title: "Password brute-force via password change"
     topic: authentication
     difficulty: practitioner
     url: "https://portswigger.net/web-security/authentication/other-mechanisms/lab-password-brute-force-via-password-change"
 
   - id: authentication-e1
-    title: "2FA bypass using a brute-force attack"
-    topic: authentication
-    difficulty: expert
-    url: "https://portswigger.net/web-security/authentication/multi-factor/lab-2fa-bypass-using-a-brute-force-attack"
-
-  - id: authentication-e2
     title: "Broken brute-force protection, multiple credentials per request"
     topic: authentication
     difficulty: expert
     url: "https://portswigger.net/web-security/authentication/password-based/lab-broken-brute-force-protection-multiple-credentials-per-request"
 
+  - id: authentication-e2
+    title: "2FA bypass using a brute-force attack"
+    topic: authentication
+    difficulty: expert
+    url: "https://portswigger.net/web-security/authentication/multi-factor/lab-2fa-bypass-using-a-brute-force-attack"
+
   # ========================================================================
-  # PATH TRAVERSAL (6 labs: 3a, 3p, 0e)
+  # PATH TRAVERSAL (6 labs: 1a, 5p, 0e)
   # ========================================================================
 
   - id: path-traversal-a1
@@ -215,38 +215,38 @@ labs:
     difficulty: apprentice
     url: "https://portswigger.net/web-security/file-path-traversal/lab-simple"
 
-  - id: path-traversal-a2
+  - id: path-traversal-p1
     title: "File path traversal, traversal sequences blocked with absolute path bypass"
     topic: path-traversal
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/file-path-traversal/lab-absolute-path-bypass"
 
-  - id: path-traversal-a3
+  - id: path-traversal-p2
     title: "File path traversal, traversal sequences stripped non-recursively"
     topic: path-traversal
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/file-path-traversal/lab-sequences-stripped-non-recursively"
 
-  - id: path-traversal-p1
+  - id: path-traversal-p3
     title: "File path traversal, traversal sequences stripped with superfluous URL-decode"
     topic: path-traversal
     difficulty: practitioner
     url: "https://portswigger.net/web-security/file-path-traversal/lab-superfluous-url-decode"
 
-  - id: path-traversal-p2
+  - id: path-traversal-p4
     title: "File path traversal, validation of start of path"
     topic: path-traversal
     difficulty: practitioner
     url: "https://portswigger.net/web-security/file-path-traversal/lab-validate-start-of-path"
 
-  - id: path-traversal-p3
+  - id: path-traversal-p5
     title: "File path traversal, validation of file extension with null byte bypass"
     topic: path-traversal
     difficulty: practitioner
     url: "https://portswigger.net/web-security/file-path-traversal/lab-validate-file-extension-null-byte-bypass"
 
   # ========================================================================
-  # COMMAND INJECTION (5 labs: 2a, 3p, 0e)
+  # COMMAND INJECTION (5 labs: 1a, 4p, 0e)
   # ========================================================================
 
   - id: command-injection-a1
@@ -255,145 +255,29 @@ labs:
     difficulty: apprentice
     url: "https://portswigger.net/web-security/os-command-injection/lab-simple"
 
-  - id: command-injection-a2
+  - id: command-injection-p1
     title: "Blind OS command injection with time delays"
     topic: command-injection
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/os-command-injection/lab-blind-time-delays"
 
-  - id: command-injection-p1
+  - id: command-injection-p2
     title: "Blind OS command injection with output redirection"
     topic: command-injection
     difficulty: practitioner
     url: "https://portswigger.net/web-security/os-command-injection/lab-blind-output-redirection"
 
-  - id: command-injection-p2
+  - id: command-injection-p3
     title: "Blind OS command injection with out-of-band interaction"
     topic: command-injection
     difficulty: practitioner
     url: "https://portswigger.net/web-security/os-command-injection/lab-blind-out-of-band"
 
-  - id: command-injection-p3
+  - id: command-injection-p4
     title: "Blind OS command injection with out-of-band data exfiltration"
     topic: command-injection
     difficulty: practitioner
     url: "https://portswigger.net/web-security/os-command-injection/lab-blind-out-of-band-data-exfiltration"
-
-  # ========================================================================
-  # INFORMATION DISCLOSURE (5 labs: 2a, 3p, 0e)
-  # ========================================================================
-
-  - id: information-disclosure-a1
-    title: "Information disclosure in error messages"
-    topic: information-disclosure
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-in-error-messages"
-
-  - id: information-disclosure-a2
-    title: "Information disclosure on debug page"
-    topic: information-disclosure
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-on-debug-page"
-
-  - id: information-disclosure-p1
-    title: "Source code disclosure via backup files"
-    topic: information-disclosure
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-via-backup-files"
-
-  - id: information-disclosure-p2
-    title: "Authentication bypass via information disclosure"
-    topic: information-disclosure
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-authentication-bypass"
-
-  - id: information-disclosure-p3
-    title: "Information disclosure in version control history"
-    topic: information-disclosure
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-in-version-control-history"
-
-  # ========================================================================
-  # ACCESS CONTROL (13 labs: 5a, 7p, 1e)
-  # ========================================================================
-
-  - id: access-control-a1
-    title: "Unprotected admin functionality"
-    topic: access-control
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/access-control/lab-unprotected-admin-functionality"
-
-  - id: access-control-a2
-    title: "Unprotected admin functionality with unpredictable URL"
-    topic: access-control
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/access-control/lab-unprotected-admin-functionality-with-unpredictable-url"
-
-  - id: access-control-a3
-    title: "User role controlled by request parameter"
-    topic: access-control
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/access-control/lab-user-role-controlled-by-request-parameter"
-
-  - id: access-control-a4
-    title: "User role can be modified in user profile"
-    topic: access-control
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/access-control/lab-user-role-can-be-modified-in-user-profile"
-
-  - id: access-control-a5
-    title: "User ID controlled by request parameter"
-    topic: access-control
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/access-control/lab-user-id-controlled-by-request-parameter"
-
-  - id: access-control-p1
-    title: "User ID controlled by request parameter, with unpredictable user IDs"
-    topic: access-control
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/access-control/lab-user-id-controlled-by-request-parameter-with-unpredictable-user-ids"
-
-  - id: access-control-p2
-    title: "User ID controlled by request parameter with data leakage in redirect"
-    topic: access-control
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/access-control/lab-user-id-controlled-by-request-parameter-with-data-leakage-in-redirect"
-
-  - id: access-control-p3
-    title: "User ID controlled by request parameter with password disclosure"
-    topic: access-control
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/access-control/lab-user-id-controlled-by-request-parameter-with-password-disclosure"
-
-  - id: access-control-p4
-    title: "Insecure direct object references"
-    topic: access-control
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/access-control/lab-insecure-direct-object-references"
-
-  - id: access-control-p5
-    title: "URL-based access control can be circumvented"
-    topic: access-control
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/access-control/lab-url-based-access-control-can-be-circumvented"
-
-  - id: access-control-p6
-    title: "Method-based access control can be circumvented"
-    topic: access-control
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/access-control/lab-method-based-access-control-can-be-circumvented"
-
-  - id: access-control-p7
-    title: "Multi-step process with no access control on one step"
-    topic: access-control
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/access-control/lab-multi-step-process-with-no-access-control-on-one-step"
-
-  - id: access-control-e1
-    title: "Referer-based access control"
-    topic: access-control
-    difficulty: expert
-    url: "https://portswigger.net/web-security/access-control/lab-referer-based-access-control"
 
   # ========================================================================
   # BUSINESS LOGIC (11 labs: 4a, 6p, 1e)
@@ -460,10 +344,126 @@ labs:
     url: "https://portswigger.net/web-security/logic-flaws/examples/lab-logic-flaws-infinite-money"
 
   - id: business-logic-e1
-    title: "Authentication bypass via encryption oracle"
+    title: "Bypassing access controls using email address parsing discrepancies"
     topic: business-logic
     difficulty: expert
-    url: "https://portswigger.net/web-security/logic-flaws/examples/lab-logic-flaws-authentication-bypass-via-encryption-oracle"
+    url: "https://portswigger.net/web-security/logic-flaws/examples/lab-logic-flaws-bypassing-access-controls-using-email-address-parsing-discrepancies"
+
+  # ========================================================================
+  # INFORMATION DISCLOSURE (5 labs: 4a, 1p, 0e)
+  # ========================================================================
+
+  - id: information-disclosure-a1
+    title: "Information disclosure in error messages"
+    topic: information-disclosure
+    difficulty: apprentice
+    url: "https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-in-error-messages"
+
+  - id: information-disclosure-a2
+    title: "Information disclosure on debug page"
+    topic: information-disclosure
+    difficulty: apprentice
+    url: "https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-on-debug-page"
+
+  - id: information-disclosure-a3
+    title: "Source code disclosure via backup files"
+    topic: information-disclosure
+    difficulty: apprentice
+    url: "https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-via-backup-files"
+
+  - id: information-disclosure-a4
+    title: "Authentication bypass via information disclosure"
+    topic: information-disclosure
+    difficulty: apprentice
+    url: "https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-authentication-bypass"
+
+  - id: information-disclosure-p1
+    title: "Information disclosure in version control history"
+    topic: information-disclosure
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/information-disclosure/exploiting/lab-infoleak-in-version-control-history"
+
+  # ========================================================================
+  # ACCESS CONTROL (13 labs: 9a, 4p, 0e)
+  # ========================================================================
+
+  - id: access-control-a1
+    title: "Unprotected admin functionality"
+    topic: access-control
+    difficulty: apprentice
+    url: "https://portswigger.net/web-security/access-control/lab-unprotected-admin-functionality"
+
+  - id: access-control-a2
+    title: "Unprotected admin functionality with unpredictable URL"
+    topic: access-control
+    difficulty: apprentice
+    url: "https://portswigger.net/web-security/access-control/lab-unprotected-admin-functionality-with-unpredictable-url"
+
+  - id: access-control-a3
+    title: "User role controlled by request parameter"
+    topic: access-control
+    difficulty: apprentice
+    url: "https://portswigger.net/web-security/access-control/lab-user-role-controlled-by-request-parameter"
+
+  - id: access-control-a4
+    title: "User role can be modified in user profile"
+    topic: access-control
+    difficulty: apprentice
+    url: "https://portswigger.net/web-security/access-control/lab-user-role-can-be-modified-in-user-profile"
+
+  - id: access-control-a5
+    title: "User ID controlled by request parameter"
+    topic: access-control
+    difficulty: apprentice
+    url: "https://portswigger.net/web-security/access-control/lab-user-id-controlled-by-request-parameter"
+
+  - id: access-control-a6
+    title: "User ID controlled by request parameter, with unpredictable user IDs"
+    topic: access-control
+    difficulty: apprentice
+    url: "https://portswigger.net/web-security/access-control/lab-user-id-controlled-by-request-parameter-with-unpredictable-user-ids"
+
+  - id: access-control-a7
+    title: "User ID controlled by request parameter with data leakage in redirect"
+    topic: access-control
+    difficulty: apprentice
+    url: "https://portswigger.net/web-security/access-control/lab-user-id-controlled-by-request-parameter-with-data-leakage-in-redirect"
+
+  - id: access-control-a8
+    title: "User ID controlled by request parameter with password disclosure"
+    topic: access-control
+    difficulty: apprentice
+    url: "https://portswigger.net/web-security/access-control/lab-user-id-controlled-by-request-parameter-with-password-disclosure"
+
+  - id: access-control-a9
+    title: "Insecure direct object references"
+    topic: access-control
+    difficulty: apprentice
+    url: "https://portswigger.net/web-security/access-control/lab-insecure-direct-object-references"
+
+  - id: access-control-p1
+    title: "URL-based access control can be circumvented"
+    topic: access-control
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/access-control/lab-url-based-access-control-can-be-circumvented"
+
+  - id: access-control-p2
+    title: "Method-based access control can be circumvented"
+    topic: access-control
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/access-control/lab-method-based-access-control-can-be-circumvented"
+
+  - id: access-control-p3
+    title: "Multi-step process with no access control on one step"
+    topic: access-control
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/access-control/lab-multi-step-process-with-no-access-control-on-one-step"
+
+  - id: access-control-p4
+    title: "Referer-based access control"
+    topic: access-control
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/access-control/lab-referer-based-access-control"
 
   # ========================================================================
   # FILE UPLOAD (7 labs: 2a, 4p, 1e)
@@ -512,7 +512,7 @@ labs:
     url: "https://portswigger.net/web-security/file-upload/lab-file-upload-web-shell-upload-via-race-condition"
 
   # ========================================================================
-  # RACE CONDITIONS (6 labs: 2a, 3p, 1e)
+  # RACE CONDITIONS (6 labs: 1a, 4p, 1e)
   # ========================================================================
 
   - id: race-conditions-a1
@@ -521,25 +521,25 @@ labs:
     difficulty: apprentice
     url: "https://portswigger.net/web-security/race-conditions/lab-race-conditions-limit-overrun"
 
-  - id: race-conditions-a2
+  - id: race-conditions-p1
     title: "Bypassing rate limits via race conditions"
     topic: race-conditions
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/race-conditions/lab-race-conditions-bypassing-rate-limits"
 
-  - id: race-conditions-p1
+  - id: race-conditions-p2
     title: "Multi-endpoint race conditions"
     topic: race-conditions
     difficulty: practitioner
     url: "https://portswigger.net/web-security/race-conditions/lab-race-conditions-multi-endpoint"
 
-  - id: race-conditions-p2
+  - id: race-conditions-p3
     title: "Single-endpoint race conditions"
     topic: race-conditions
     difficulty: practitioner
     url: "https://portswigger.net/web-security/race-conditions/lab-race-conditions-single-endpoint"
 
-  - id: race-conditions-p3
+  - id: race-conditions-p4
     title: "Exploiting time-sensitive vulnerabilities"
     topic: race-conditions
     difficulty: practitioner
@@ -552,7 +552,7 @@ labs:
     url: "https://portswigger.net/web-security/race-conditions/lab-race-conditions-partial-construction"
 
   # ========================================================================
-  # SSRF (7 labs: 2a, 4p, 1e)
+  # SSRF (7 labs: 2a, 3p, 2e)
   # ========================================================================
 
   - id: ssrf-a1
@@ -568,28 +568,22 @@ labs:
     url: "https://portswigger.net/web-security/ssrf/lab-basic-ssrf-against-backend-system"
 
   - id: ssrf-p1
+    title: "Blind SSRF with out-of-band detection"
+    topic: ssrf
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/ssrf/blind/lab-out-of-band-detection"
+
+  - id: ssrf-p2
     title: "SSRF with blacklist-based input filter"
     topic: ssrf
     difficulty: practitioner
     url: "https://portswigger.net/web-security/ssrf/lab-ssrf-with-blacklist-filter"
 
-  - id: ssrf-p2
-    title: "SSRF with whitelist-based input filter"
-    topic: ssrf
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/ssrf/lab-ssrf-with-whitelist-filter"
-
   - id: ssrf-p3
     title: "SSRF with filter bypass via open redirection vulnerability"
     topic: ssrf
     difficulty: practitioner
-    url: "https://portswigger.net/web-security/ssrf/lab-ssrf-with-filter-bypass-via-open-redirection"
-
-  - id: ssrf-p4
-    title: "Blind SSRF with out-of-band detection"
-    topic: ssrf
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/ssrf/blind/lab-out-of-band-detection"
+    url: "https://portswigger.net/web-security/ssrf/lab-ssrf-filter-bypass-via-open-redirection"
 
   - id: ssrf-e1
     title: "Blind SSRF with Shellshock exploitation"
@@ -597,8 +591,14 @@ labs:
     difficulty: expert
     url: "https://portswigger.net/web-security/ssrf/blind/lab-shellshock-exploitation"
 
+  - id: ssrf-e2
+    title: "SSRF with whitelist-based input filter"
+    topic: ssrf
+    difficulty: expert
+    url: "https://portswigger.net/web-security/ssrf/lab-ssrf-with-whitelist-filter"
+
   # ========================================================================
-  # XXE (9 labs: 3a, 5p, 1e)
+  # XXE (9 labs: 2a, 6p, 1e)
   # ========================================================================
 
   - id: xxe-a1
@@ -613,37 +613,37 @@ labs:
     difficulty: apprentice
     url: "https://portswigger.net/web-security/xxe/lab-exploiting-xxe-to-perform-ssrf"
 
-  - id: xxe-a3
+  - id: xxe-p1
     title: "Blind XXE with out-of-band interaction"
     topic: xxe
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/xxe/blind/lab-xxe-with-out-of-band-interaction"
 
-  - id: xxe-p1
+  - id: xxe-p2
     title: "Blind XXE with out-of-band interaction via XML parameter entities"
     topic: xxe
     difficulty: practitioner
-    url: "https://portswigger.net/web-security/xxe/blind/lab-xxe-with-out-of-band-interaction-via-xml-parameter-entities"
+    url: "https://portswigger.net/web-security/xxe/blind/lab-xxe-with-out-of-band-interaction-using-parameter-entities"
 
-  - id: xxe-p2
+  - id: xxe-p3
     title: "Exploiting blind XXE to exfiltrate data using a malicious external DTD"
     topic: xxe
     difficulty: practitioner
     url: "https://portswigger.net/web-security/xxe/blind/lab-xxe-with-out-of-band-exfiltration"
 
-  - id: xxe-p3
+  - id: xxe-p4
     title: "Exploiting blind XXE to retrieve data via error messages"
     topic: xxe
     difficulty: practitioner
     url: "https://portswigger.net/web-security/xxe/blind/lab-xxe-with-data-retrieval-via-error-messages"
 
-  - id: xxe-p4
+  - id: xxe-p5
     title: "Exploiting XInclude to retrieve files"
     topic: xxe
     difficulty: practitioner
     url: "https://portswigger.net/web-security/xxe/lab-xinclude-attack"
 
-  - id: xxe-p5
+  - id: xxe-p6
     title: "Exploiting XXE via image file upload"
     topic: xxe
     difficulty: practitioner
@@ -684,7 +684,7 @@ labs:
     url: "https://portswigger.net/web-security/nosql-injection/lab-nosql-injection-extract-unknown-fields"
 
   # ========================================================================
-  # API TESTING (5 labs: 2a, 3p, 0e)
+  # API TESTING (5 labs: 1a, 3p, 1e)
   # ========================================================================
 
   - id: api-testing-a1
@@ -693,28 +693,28 @@ labs:
     difficulty: apprentice
     url: "https://portswigger.net/web-security/api-testing/lab-exploiting-api-endpoint-using-documentation"
 
-  - id: api-testing-a2
-    title: "Finding and exploiting an unused API endpoint"
-    topic: api-testing
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/api-testing/lab-exploiting-unused-api-endpoint"
-
   - id: api-testing-p1
-    title: "Exploiting a mass assignment vulnerability"
-    topic: api-testing
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/api-testing/lab-exploiting-mass-assignment-vulnerability"
-
-  - id: api-testing-p2
     title: "Exploiting server-side parameter pollution in a query string"
     topic: api-testing
     difficulty: practitioner
     url: "https://portswigger.net/web-security/api-testing/server-side-parameter-pollution/lab-exploiting-server-side-parameter-pollution-in-query-string"
 
-  - id: api-testing-p3
-    title: "Exploiting server-side parameter pollution in a REST URL"
+  - id: api-testing-p2
+    title: "Finding and exploiting an unused API endpoint"
     topic: api-testing
     difficulty: practitioner
+    url: "https://portswigger.net/web-security/api-testing/lab-finding-and-exploiting-unused-api-endpoint"
+
+  - id: api-testing-p3
+    title: "Exploiting a mass assignment vulnerability"
+    topic: api-testing
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/api-testing/lab-exploiting-mass-assignment-vulnerability"
+
+  - id: api-testing-e1
+    title: "Exploiting server-side parameter pollution in a REST URL"
+    topic: api-testing
+    difficulty: expert
     url: "https://portswigger.net/web-security/api-testing/server-side-parameter-pollution/lab-exploiting-server-side-parameter-pollution-in-rest-url"
 
   # ========================================================================
@@ -752,7 +752,7 @@ labs:
     url: "https://portswigger.net/web-security/web-cache-deception/lab-wcd-exploiting-exact-match-cache-rules"
 
   # ========================================================================
-  # XSS - CROSS-SITE SCRIPTING (30 labs: 9a, 17p, 4e)
+  # XSS (30 labs: 9a, 15p, 6e)
   # ========================================================================
 
   - id: xss-a1
@@ -834,100 +834,88 @@ labs:
     url: "https://portswigger.net/web-security/cross-site-scripting/dom-based/lab-dom-xss-stored"
 
   - id: xss-p5
-    title: "Exploiting cross-site scripting to steal cookies"
-    topic: xss
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/cross-site-scripting/exploiting/lab-stealing-cookies"
-
-  - id: xss-p6
-    title: "Exploiting cross-site scripting to capture passwords"
-    topic: xss
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/cross-site-scripting/exploiting/lab-capturing-passwords"
-
-  - id: xss-p7
-    title: "Exploiting XSS to perform CSRF"
-    topic: xss
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/cross-site-scripting/exploiting/lab-perform-csrf"
-
-  - id: xss-p8
     title: "Reflected XSS into HTML context with most tags and attributes blocked"
     topic: xss
     difficulty: practitioner
     url: "https://portswigger.net/web-security/cross-site-scripting/contexts/lab-html-context-with-most-tags-and-attributes-blocked"
 
-  - id: xss-p9
+  - id: xss-p6
     title: "Reflected XSS into HTML context with all tags blocked except custom ones"
     topic: xss
     difficulty: practitioner
     url: "https://portswigger.net/web-security/cross-site-scripting/contexts/lab-html-context-with-all-standard-tags-blocked"
 
-  - id: xss-p10
+  - id: xss-p7
     title: "Reflected XSS with some SVG markup allowed"
     topic: xss
     difficulty: practitioner
     url: "https://portswigger.net/web-security/cross-site-scripting/contexts/lab-some-svg-markup-allowed"
 
-  - id: xss-p11
+  - id: xss-p8
     title: "Reflected XSS in canonical link tag"
     topic: xss
     difficulty: practitioner
     url: "https://portswigger.net/web-security/cross-site-scripting/contexts/lab-canonical-link-tag"
 
-  - id: xss-p12
+  - id: xss-p9
     title: "Reflected XSS into a JavaScript string with single quote and backslash escaped"
     topic: xss
     difficulty: practitioner
     url: "https://portswigger.net/web-security/cross-site-scripting/contexts/lab-javascript-string-single-quote-backslash-escaped"
 
-  - id: xss-p13
+  - id: xss-p10
     title: "Reflected XSS into a JavaScript string with angle brackets and double quotes HTML-encoded and single quotes escaped"
     topic: xss
     difficulty: practitioner
     url: "https://portswigger.net/web-security/cross-site-scripting/contexts/lab-javascript-string-angle-brackets-double-quotes-encoded-single-quotes-escaped"
 
-  - id: xss-p14
+  - id: xss-p11
     title: "Stored XSS into onclick event with angle brackets and double quotes HTML-encoded and single quotes and backslash escaped"
     topic: xss
     difficulty: practitioner
     url: "https://portswigger.net/web-security/cross-site-scripting/contexts/lab-onclick-event-angle-brackets-double-quotes-html-encoded-single-quotes-backslash-escaped"
 
-  - id: xss-p15
+  - id: xss-p12
     title: "Reflected XSS into a template literal with angle brackets, single, double quotes, backslash and backticks Unicode-escaped"
     topic: xss
     difficulty: practitioner
     url: "https://portswigger.net/web-security/cross-site-scripting/contexts/lab-javascript-template-literal-angle-brackets-single-double-quotes-backslash-backticks-escaped"
 
-  - id: xss-p16
-    title: "Reflected XSS with event handlers and href attributes blocked"
+  - id: xss-p13
+    title: "Exploiting cross-site scripting to steal cookies"
     topic: xss
     difficulty: practitioner
-    url: "https://portswigger.net/web-security/cross-site-scripting/contexts/lab-event-handlers-and-href-attributes-blocked"
+    url: "https://portswigger.net/web-security/cross-site-scripting/exploiting/lab-stealing-cookies"
 
-  - id: xss-p17
-    title: "Reflected XSS protected by CSP, with CSP bypass"
+  - id: xss-p14
+    title: "Exploiting cross-site scripting to capture passwords"
     topic: xss
     difficulty: practitioner
-    url: "https://portswigger.net/web-security/cross-site-scripting/content-security-policy/lab-csp-bypass"
+    url: "https://portswigger.net/web-security/cross-site-scripting/exploiting/lab-capturing-passwords"
+
+  - id: xss-p15
+    title: "Exploiting XSS to bypass CSRF defenses"
+    topic: xss
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/cross-site-scripting/exploiting/lab-perform-csrf"
 
   - id: xss-e1
     title: "Reflected XSS with AngularJS sandbox escape without strings"
     topic: xss
     difficulty: expert
-    url: "https://portswigger.net/web-security/cross-site-scripting/contexts/client-side-template-injection/lab-angular-sandbox-escape-without-strings"
+    url: "https://portswigger.net/web-security/cross-site-scripting/contexts/lab-angularjs-sandbox-escape-without-strings"
 
   - id: xss-e2
     title: "Reflected XSS with AngularJS sandbox escape and CSP"
     topic: xss
     difficulty: expert
-    url: "https://portswigger.net/web-security/cross-site-scripting/contexts/client-side-template-injection/lab-angular-sandbox-escape-and-csp"
+    url: "https://portswigger.net/web-security/cross-site-scripting/contexts/lab-angularjs-sandbox-escape-and-csp"
 
   - id: xss-e3
-    title: "Reflected XSS protected by very strict CSP, with dangling markup attack"
+    title: "Reflected XSS with event handlers and href attributes blocked"
     topic: xss
     difficulty: expert
-    url: "https://portswigger.net/web-security/cross-site-scripting/content-security-policy/lab-very-strict-csp-with-dangling-markup-attack"
+    url: "https://portswigger.net/web-security/cross-site-scripting/contexts/lab-event-handlers-and-href-attributes-blocked"
 
   - id: xss-e4
     title: "Reflected XSS in a JavaScript URL with some characters blocked"
@@ -935,8 +923,20 @@ labs:
     difficulty: expert
     url: "https://portswigger.net/web-security/cross-site-scripting/contexts/lab-javascript-url-some-characters-blocked"
 
+  - id: xss-e5
+    title: "Reflected XSS protected by very strict CSP, with dangling markup attack"
+    topic: xss
+    difficulty: expert
+    url: "https://portswigger.net/web-security/cross-site-scripting/content-security-policy/lab-very-strict-csp-with-dangling-markup-attack"
+
+  - id: xss-e6
+    title: "Reflected XSS protected by CSP, with CSP bypass"
+    topic: xss
+    difficulty: expert
+    url: "https://portswigger.net/web-security/cross-site-scripting/content-security-policy/lab-csp-bypass"
+
   # ========================================================================
-  # CSRF (12 labs: 4a, 7p, 1e)
+  # CSRF (12 labs: 1a, 11p, 0e)
   # ========================================================================
 
   - id: csrf-a1
@@ -945,74 +945,74 @@ labs:
     difficulty: apprentice
     url: "https://portswigger.net/web-security/csrf/lab-no-defenses"
 
-  - id: csrf-a2
+  - id: csrf-p1
     title: "CSRF where token validation depends on request method"
     topic: csrf
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-validation-depends-on-request-method"
 
-  - id: csrf-a3
+  - id: csrf-p2
     title: "CSRF where token validation depends on token being present"
     topic: csrf
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-validation-depends-on-token-being-present"
 
-  - id: csrf-a4
-    title: "SameSite Lax bypass via method override"
-    topic: csrf
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions/lab-samesite-lax-bypass-via-method-override"
-
-  - id: csrf-p1
+  - id: csrf-p3
     title: "CSRF where token is not tied to user session"
     topic: csrf
     difficulty: practitioner
     url: "https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-not-tied-to-user-session"
 
-  - id: csrf-p2
+  - id: csrf-p4
     title: "CSRF where token is tied to non-session cookie"
     topic: csrf
     difficulty: practitioner
     url: "https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-tied-to-non-session-cookie"
 
-  - id: csrf-p3
+  - id: csrf-p5
     title: "CSRF where token is duplicated in cookie"
     topic: csrf
     difficulty: practitioner
     url: "https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-duplicated-in-cookie"
 
-  - id: csrf-p4
-    title: "CSRF where Referer validation depends on header being present"
-    topic: csrf
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/csrf/bypassing-referer-based-defenses/lab-referer-validation-depends-on-header-being-present"
-
-  - id: csrf-p5
-    title: "CSRF with broken Referer validation"
-    topic: csrf
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/csrf/bypassing-referer-based-defenses/lab-referer-validation-broken"
-
   - id: csrf-p6
+    title: "SameSite Lax bypass via method override"
+    topic: csrf
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions/lab-samesite-lax-bypass-via-method-override"
+
+  - id: csrf-p7
     title: "SameSite Strict bypass via client-side redirect"
     topic: csrf
     difficulty: practitioner
     url: "https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions/lab-samesite-strict-bypass-via-client-side-redirect"
 
-  - id: csrf-p7
+  - id: csrf-p8
+    title: "SameSite Strict bypass via sibling domain"
+    topic: csrf
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions/lab-samesite-strict-bypass-via-sibling-domain"
+
+  - id: csrf-p9
     title: "SameSite Lax bypass via cookie refresh"
     topic: csrf
     difficulty: practitioner
-    url: "https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions/lab-samesite-strict-bypass-via-cookie-refresh"
+    url: "https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions/lab-samesite-lax-bypass-via-cookie-refresh"
 
-  - id: csrf-e1
-    title: "SameSite Strict bypass via sibling domain"
+  - id: csrf-p10
+    title: "CSRF where Referer validation depends on header being present"
     topic: csrf
-    difficulty: expert
-    url: "https://portswigger.net/web-security/csrf/bypassing-samesite-restrictions/lab-samesite-strict-bypass-via-sibling-domain"
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/csrf/bypassing-referer-based-defenses/lab-referer-validation-depends-on-header-being-present"
+
+  - id: csrf-p11
+    title: "CSRF with broken Referer validation"
+    topic: csrf
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/csrf/bypassing-referer-based-defenses/lab-referer-validation-broken"
 
   # ========================================================================
-  # CORS (3 labs: 1a, 2p, 0e)
+  # CORS (3 labs: 2a, 1p, 0e)
   # ========================================================================
 
   - id: cors-a1
@@ -1021,20 +1021,20 @@ labs:
     difficulty: apprentice
     url: "https://portswigger.net/web-security/cors/lab-basic-origin-reflection-attack"
 
-  - id: cors-p1
+  - id: cors-a2
     title: "CORS vulnerability with trusted null origin"
     topic: cors
-    difficulty: practitioner
+    difficulty: apprentice
     url: "https://portswigger.net/web-security/cors/lab-null-origin-whitelisted-attack"
 
-  - id: cors-p2
+  - id: cors-p1
     title: "CORS vulnerability with trusted insecure protocols"
     topic: cors
     difficulty: practitioner
     url: "https://portswigger.net/web-security/cors/lab-breaking-https-attack"
 
   # ========================================================================
-  # CLICKJACKING (5 labs: 2a, 3p, 0e)
+  # CLICKJACKING (5 labs: 3a, 2p, 0e)
   # ========================================================================
 
   - id: clickjacking-a1
@@ -1049,65 +1049,65 @@ labs:
     difficulty: apprentice
     url: "https://portswigger.net/web-security/clickjacking/lab-prefilled-form-input"
 
-  - id: clickjacking-p1
+  - id: clickjacking-a3
     title: "Clickjacking with a frame buster script"
     topic: clickjacking
-    difficulty: practitioner
+    difficulty: apprentice
     url: "https://portswigger.net/web-security/clickjacking/lab-frame-buster-script"
 
-  - id: clickjacking-p2
+  - id: clickjacking-p1
     title: "Exploiting clickjacking vulnerability to trigger DOM-based XSS"
     topic: clickjacking
     difficulty: practitioner
     url: "https://portswigger.net/web-security/clickjacking/lab-exploiting-to-trigger-dom-based-xss"
 
-  - id: clickjacking-p3
+  - id: clickjacking-p2
     title: "Multistep clickjacking"
     topic: clickjacking
     difficulty: practitioner
     url: "https://portswigger.net/web-security/clickjacking/lab-multistep"
 
   # ========================================================================
-  # DOM-BASED VULNERABILITIES (7 labs: 2a, 4p, 1e)
+  # DOM-BASED (7 labs: 0a, 5p, 2e)
   # ========================================================================
 
-  - id: dom-based-a1
+  - id: dom-based-p1
     title: "DOM XSS using web messages"
     topic: dom-based
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/dom-based/controlling-the-web-message-source/lab-dom-xss-using-web-messages"
 
-  - id: dom-based-a2
+  - id: dom-based-p2
     title: "DOM XSS using web messages and a JavaScript URL"
     topic: dom-based
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/dom-based/controlling-the-web-message-source/lab-dom-xss-using-web-messages-and-a-javascript-url"
 
-  - id: dom-based-p1
+  - id: dom-based-p3
     title: "DOM XSS using web messages and JSON.parse"
     topic: dom-based
     difficulty: practitioner
     url: "https://portswigger.net/web-security/dom-based/controlling-the-web-message-source/lab-dom-xss-using-web-messages-and-json-parse"
 
-  - id: dom-based-p2
+  - id: dom-based-p4
     title: "DOM-based open redirection"
     topic: dom-based
     difficulty: practitioner
     url: "https://portswigger.net/web-security/dom-based/open-redirection/lab-dom-open-redirection"
 
-  - id: dom-based-p3
+  - id: dom-based-p5
     title: "DOM-based cookie manipulation"
     topic: dom-based
     difficulty: practitioner
     url: "https://portswigger.net/web-security/dom-based/cookie-manipulation/lab-dom-cookie-manipulation"
 
-  - id: dom-based-p4
+  - id: dom-based-e1
     title: "Exploiting DOM clobbering to enable XSS"
     topic: dom-based
-    difficulty: practitioner
+    difficulty: expert
     url: "https://portswigger.net/web-security/dom-based/dom-clobbering/lab-dom-xss-exploiting-dom-clobbering"
 
-  - id: dom-based-e1
+  - id: dom-based-e2
     title: "Clobbering DOM attributes to bypass HTML filters"
     topic: dom-based
     difficulty: expert
@@ -1124,56 +1124,50 @@ labs:
     url: "https://portswigger.net/web-security/websockets/lab-manipulating-messages-to-exploit-vulnerabilities"
 
   - id: websockets-p1
-    title: "Manipulating the WebSocket handshake to exploit vulnerabilities"
-    topic: websockets
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/websockets/lab-manipulating-handshake-to-exploit-vulnerabilities"
-
-  - id: websockets-p2
     title: "Cross-site WebSocket hijacking"
     topic: websockets
     difficulty: practitioner
     url: "https://portswigger.net/web-security/websockets/cross-site-websocket-hijacking/lab"
 
-  # ========================================================================
-  # SSTI - SERVER-SIDE TEMPLATE INJECTION (7 labs: 2a, 4p, 1e)
-  # ========================================================================
+  - id: websockets-p2
+    title: "Manipulating the WebSocket handshake to exploit vulnerabilities"
+    topic: websockets
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/websockets/lab-manipulating-handshake-to-exploit-vulnerabilities"
 
-  - id: ssti-a1
-    title: "Basic server-side template injection"
-    topic: ssti
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/server-side-template-injection/exploiting/lab-server-side-template-injection-basic"
-
-  - id: ssti-a2
-    title: "Basic server-side template injection (code context)"
-    topic: ssti
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/server-side-template-injection/exploiting/lab-server-side-template-injection-basic-code-context"
+  # ========================================================================
+  # SSTI (7 labs: 0a, 5p, 2e)
+  # ========================================================================
 
   - id: ssti-p1
+    title: "Basic server-side template injection"
+    topic: ssti
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/server-side-template-injection/exploiting/lab-server-side-template-injection-basic"
+
+  - id: ssti-p2
+    title: "Server-side template injection (code context)"
+    topic: ssti
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/server-side-template-injection/exploiting/lab-server-side-template-injection-basic-code-context"
+
+  - id: ssti-p3
     title: "Server-side template injection using documentation"
     topic: ssti
     difficulty: practitioner
     url: "https://portswigger.net/web-security/server-side-template-injection/exploiting/lab-server-side-template-injection-using-documentation"
 
-  - id: ssti-p2
+  - id: ssti-p4
     title: "Server-side template injection in an unknown language with a documented exploit"
     topic: ssti
     difficulty: practitioner
     url: "https://portswigger.net/web-security/server-side-template-injection/exploiting/lab-server-side-template-injection-in-an-unknown-language-with-a-documented-exploit"
 
-  - id: ssti-p3
+  - id: ssti-p5
     title: "Server-side template injection with information disclosure via user-supplied objects"
     topic: ssti
     difficulty: practitioner
     url: "https://portswigger.net/web-security/server-side-template-injection/exploiting/lab-server-side-template-injection-with-information-disclosure-via-user-supplied-objects"
-
-  - id: ssti-p4
-    title: "Server-side template injection with a custom exploit"
-    topic: ssti
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/server-side-template-injection/exploiting/lab-server-side-template-injection-with-a-custom-exploit"
 
   - id: ssti-e1
     title: "Server-side template injection in a sandboxed environment"
@@ -1181,8 +1175,14 @@ labs:
     difficulty: expert
     url: "https://portswigger.net/web-security/server-side-template-injection/exploiting/lab-server-side-template-injection-in-a-sandboxed-environment"
 
+  - id: ssti-e2
+    title: "Server-side template injection with a custom exploit"
+    topic: ssti
+    difficulty: expert
+    url: "https://portswigger.net/web-security/server-side-template-injection/exploiting/lab-server-side-template-injection-with-a-custom-exploit"
+
   # ========================================================================
-  # INSECURE DESERIALIZATION (10 labs: 3a, 5p, 2e)
+  # INSECURE DESERIALIZATION (10 labs: 1a, 6p, 3e)
   # ========================================================================
 
   - id: insecure-deserialization-a1
@@ -1191,62 +1191,62 @@ labs:
     difficulty: apprentice
     url: "https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-modifying-serialized-objects"
 
-  - id: insecure-deserialization-a2
+  - id: insecure-deserialization-p1
     title: "Modifying serialized data types"
     topic: insecure-deserialization
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-modifying-serialized-data-types"
 
-  - id: insecure-deserialization-a3
+  - id: insecure-deserialization-p2
     title: "Using application functionality to exploit insecure deserialization"
     topic: insecure-deserialization
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-using-application-functionality-to-exploit-insecure-deserialization"
 
-  - id: insecure-deserialization-p1
+  - id: insecure-deserialization-p3
     title: "Arbitrary object injection in PHP"
     topic: insecure-deserialization
     difficulty: practitioner
     url: "https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-arbitrary-object-injection-in-php"
 
-  - id: insecure-deserialization-p2
+  - id: insecure-deserialization-p4
     title: "Exploiting Java deserialization with Apache Commons"
     topic: insecure-deserialization
     difficulty: practitioner
     url: "https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-exploiting-java-deserialization-with-apache-commons"
 
-  - id: insecure-deserialization-p3
+  - id: insecure-deserialization-p5
     title: "Exploiting PHP deserialization with a pre-built gadget chain"
     topic: insecure-deserialization
     difficulty: practitioner
     url: "https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-exploiting-php-deserialization-with-a-pre-built-gadget-chain"
 
-  - id: insecure-deserialization-p4
+  - id: insecure-deserialization-p6
     title: "Exploiting Ruby deserialization using a documented gadget chain"
     topic: insecure-deserialization
     difficulty: practitioner
     url: "https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-exploiting-ruby-deserialization-using-a-documented-gadget-chain"
 
-  - id: insecure-deserialization-p5
+  - id: insecure-deserialization-e1
     title: "Developing a custom gadget chain for Java deserialization"
     topic: insecure-deserialization
-    difficulty: practitioner
+    difficulty: expert
     url: "https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-developing-a-custom-gadget-chain-for-java-deserialization"
 
-  - id: insecure-deserialization-e1
+  - id: insecure-deserialization-e2
     title: "Developing a custom gadget chain for PHP deserialization"
     topic: insecure-deserialization
     difficulty: expert
     url: "https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-developing-a-custom-gadget-chain-for-php-deserialization"
 
-  - id: insecure-deserialization-e2
+  - id: insecure-deserialization-e3
     title: "Using PHAR deserialization to deploy a custom gadget chain"
     topic: insecure-deserialization
     difficulty: expert
     url: "https://portswigger.net/web-security/deserialization/exploiting/lab-deserialization-using-phar-deserialization-to-deploy-a-custom-gadget-chain"
 
   # ========================================================================
-  # OAUTH (6 labs: 2a, 3p, 1e)
+  # OAUTH (6 labs: 1a, 4p, 1e)
   # ========================================================================
 
   - id: oauth-a1
@@ -1255,35 +1255,35 @@ labs:
     difficulty: apprentice
     url: "https://portswigger.net/web-security/oauth/lab-oauth-authentication-bypass-via-oauth-implicit-flow"
 
-  - id: oauth-a2
+  - id: oauth-p1
+    title: "SSRF via OpenID dynamic client registration"
+    topic: oauth
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/oauth/openid/lab-oauth-ssrf-via-openid-dynamic-client-registration"
+
+  - id: oauth-p2
     title: "Forced OAuth profile linking"
     topic: oauth
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/oauth/lab-oauth-forced-oauth-profile-linking"
 
-  - id: oauth-p1
+  - id: oauth-p3
     title: "OAuth account hijacking via redirect_uri"
     topic: oauth
     difficulty: practitioner
     url: "https://portswigger.net/web-security/oauth/lab-oauth-account-hijacking-via-redirect-uri"
 
-  - id: oauth-p2
+  - id: oauth-p4
     title: "Stealing OAuth access tokens via an open redirect"
     topic: oauth
     difficulty: practitioner
     url: "https://portswigger.net/web-security/oauth/lab-oauth-stealing-oauth-access-tokens-via-an-open-redirect"
 
-  - id: oauth-p3
+  - id: oauth-e1
     title: "Stealing OAuth access tokens via a proxy page"
     topic: oauth
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/oauth/lab-oauth-stealing-oauth-access-tokens-via-a-proxy-page"
-
-  - id: oauth-e1
-    title: "SSRF via OpenID dynamic client registration"
-    topic: oauth
     difficulty: expert
-    url: "https://portswigger.net/web-security/oauth/openid/lab-oauth-ssrf-via-openid-dynamic-client-registration"
+    url: "https://portswigger.net/web-security/oauth/lab-oauth-stealing-oauth-access-tokens-via-a-proxy-page"
 
   # ========================================================================
   # JWT (8 labs: 2a, 4p, 2e)
@@ -1338,282 +1338,276 @@ labs:
     url: "https://portswigger.net/web-security/jwt/algorithm-confusion/lab-jwt-authentication-bypass-via-algorithm-confusion-with-no-exposed-key"
 
   # ========================================================================
-  # PROTOTYPE POLLUTION (10 labs: 3a, 5p, 2e)
+  # PROTOTYPE POLLUTION (10 labs: 0a, 9p, 1e)
   # ========================================================================
 
-  - id: prototype-pollution-a1
-    title: "DOM XSS via client-side prototype pollution"
-    topic: prototype-pollution
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/prototype-pollution/client-side/lab-prototype-pollution-dom-xss-via-client-side-prototype-pollution"
-
-  - id: prototype-pollution-a2
-    title: "DOM XSS via an alternative prototype pollution vector"
-    topic: prototype-pollution
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/prototype-pollution/client-side/lab-prototype-pollution-dom-xss-via-an-alternative-prototype-pollution-vector"
-
-  - id: prototype-pollution-a3
-    title: "Client-side prototype pollution via flawed sanitization"
-    topic: prototype-pollution
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/prototype-pollution/client-side/lab-prototype-pollution-client-side-prototype-pollution-via-flawed-sanitization"
-
   - id: prototype-pollution-p1
-    title: "Client-side prototype pollution in third-party libraries"
-    topic: prototype-pollution
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/prototype-pollution/client-side/lab-prototype-pollution-client-side-prototype-pollution-in-third-party-libraries"
-
-  - id: prototype-pollution-p2
     title: "Client-side prototype pollution via browser APIs"
     topic: prototype-pollution
     difficulty: practitioner
-    url: "https://portswigger.net/web-security/prototype-pollution/client-side/browser-apis/lab-prototype-pollution-client-side-prototype-pollution-via-browser-apis"
+    url: "https://portswigger.net/web-security/prototype-pollution/lab-prototype-pollution-client-side-prototype-pollution-via-browser-apis"
+
+  - id: prototype-pollution-p2
+    title: "DOM XSS via client-side prototype pollution"
+    topic: prototype-pollution
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/prototype-pollution/lab-prototype-pollution-dom-xss-via-client-side-prototype-pollution"
 
   - id: prototype-pollution-p3
+    title: "DOM XSS via an alternative prototype pollution vector"
+    topic: prototype-pollution
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/prototype-pollution/lab-prototype-pollution-dom-xss-via-an-alternative-prototype-pollution-vector"
+
+  - id: prototype-pollution-p4
+    title: "Client-side prototype pollution via flawed sanitization"
+    topic: prototype-pollution
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/prototype-pollution/lab-prototype-pollution-client-side-prototype-pollution-via-flawed-sanitization"
+
+  - id: prototype-pollution-p5
+    title: "Client-side prototype pollution in third-party libraries"
+    topic: prototype-pollution
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/prototype-pollution/lab-prototype-pollution-client-side-prototype-pollution-in-third-party-libraries"
+
+  - id: prototype-pollution-p6
     title: "Privilege escalation via server-side prototype pollution"
     topic: prototype-pollution
     difficulty: practitioner
     url: "https://portswigger.net/web-security/prototype-pollution/server-side/lab-privilege-escalation-via-server-side-prototype-pollution"
 
-  - id: prototype-pollution-p4
+  - id: prototype-pollution-p7
     title: "Detecting server-side prototype pollution without polluted property reflection"
     topic: prototype-pollution
     difficulty: practitioner
     url: "https://portswigger.net/web-security/prototype-pollution/server-side/lab-detecting-server-side-prototype-pollution-without-polluted-property-reflection"
 
-  - id: prototype-pollution-p5
-    title: "Bypassing flawed input filters via server-side prototype pollution"
+  - id: prototype-pollution-p8
+    title: "Bypassing flawed input filters for server-side prototype pollution"
     topic: prototype-pollution
     difficulty: practitioner
-    url: "https://portswigger.net/web-security/prototype-pollution/server-side/lab-bypassing-flawed-input-filters-via-server-side-prototype-pollution"
+    url: "https://portswigger.net/web-security/prototype-pollution/server-side/lab-bypassing-flawed-input-filters-for-server-side-prototype-pollution"
 
-  - id: prototype-pollution-e1
+  - id: prototype-pollution-p9
     title: "Remote code execution via server-side prototype pollution"
     topic: prototype-pollution
-    difficulty: expert
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/prototype-pollution/server-side/lab-remote-code-execution-via-server-side-prototype-pollution"
 
-  - id: prototype-pollution-e2
+  - id: prototype-pollution-e1
     title: "Exfiltrating sensitive data via server-side prototype pollution"
     topic: prototype-pollution
     difficulty: expert
     url: "https://portswigger.net/web-security/prototype-pollution/server-side/lab-exfiltrating-sensitive-data-via-server-side-prototype-pollution"
 
   # ========================================================================
-  # HTTP REQUEST SMUGGLING (22 labs: 5a, 12p, 5e)
+  # HTTP REQUEST SMUGGLING (21 labs: 0a, 15p, 6e)
   # ========================================================================
 
-  - id: http-request-smuggling-a1
+  - id: http-request-smuggling-p1
     title: "HTTP request smuggling, basic CL.TE vulnerability"
     topic: http-request-smuggling
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/request-smuggling/lab-basic-cl-te"
 
-  - id: http-request-smuggling-a2
+  - id: http-request-smuggling-p2
     title: "HTTP request smuggling, basic TE.CL vulnerability"
     topic: http-request-smuggling
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/request-smuggling/lab-basic-te-cl"
 
-  - id: http-request-smuggling-a3
+  - id: http-request-smuggling-p3
     title: "HTTP request smuggling, obfuscating the TE header"
     topic: http-request-smuggling
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/request-smuggling/lab-obfuscating-te-header"
 
-  - id: http-request-smuggling-a4
+  - id: http-request-smuggling-p4
     title: "HTTP request smuggling, confirming a CL.TE vulnerability via differential responses"
     topic: http-request-smuggling
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/request-smuggling/finding/lab-confirming-cl-te-via-differential-responses"
 
-  - id: http-request-smuggling-a5
+  - id: http-request-smuggling-p5
     title: "HTTP request smuggling, confirming a TE.CL vulnerability via differential responses"
     topic: http-request-smuggling
-    difficulty: apprentice
+    difficulty: practitioner
     url: "https://portswigger.net/web-security/request-smuggling/finding/lab-confirming-te-cl-via-differential-responses"
 
-  - id: http-request-smuggling-p1
+  - id: http-request-smuggling-p6
     title: "Exploiting HTTP request smuggling to bypass front-end security controls, CL.TE vulnerability"
     topic: http-request-smuggling
     difficulty: practitioner
     url: "https://portswigger.net/web-security/request-smuggling/exploiting/lab-bypass-front-end-controls-cl-te"
 
-  - id: http-request-smuggling-p2
+  - id: http-request-smuggling-p7
     title: "Exploiting HTTP request smuggling to bypass front-end security controls, TE.CL vulnerability"
     topic: http-request-smuggling
     difficulty: practitioner
     url: "https://portswigger.net/web-security/request-smuggling/exploiting/lab-bypass-front-end-controls-te-cl"
 
-  - id: http-request-smuggling-p3
+  - id: http-request-smuggling-p8
     title: "Exploiting HTTP request smuggling to reveal front-end request rewriting"
     topic: http-request-smuggling
     difficulty: practitioner
     url: "https://portswigger.net/web-security/request-smuggling/exploiting/lab-reveal-front-end-request-rewriting"
 
-  - id: http-request-smuggling-p4
+  - id: http-request-smuggling-p9
     title: "Exploiting HTTP request smuggling to capture other users' requests"
     topic: http-request-smuggling
     difficulty: practitioner
     url: "https://portswigger.net/web-security/request-smuggling/exploiting/lab-capture-other-users-requests"
 
-  - id: http-request-smuggling-p5
+  - id: http-request-smuggling-p10
     title: "Exploiting HTTP request smuggling to deliver reflected XSS"
     topic: http-request-smuggling
     difficulty: practitioner
     url: "https://portswigger.net/web-security/request-smuggling/exploiting/lab-deliver-reflected-xss"
 
-  - id: http-request-smuggling-p6
+  - id: http-request-smuggling-p11
     title: "Response queue poisoning via H2.TE request smuggling"
     topic: http-request-smuggling
     difficulty: practitioner
-    url: "https://portswigger.net/web-security/request-smuggling/advanced/response-queue-poisoning/lab-request-smuggling-h2-response-queue-poisoning-via-te-request-smuggling"
+    url: "https://portswigger.net/web-security/request-smuggling/advanced/lab-request-smuggling-h2-te-desync-v10a"
 
-  - id: http-request-smuggling-p7
+  - id: http-request-smuggling-p12
     title: "H2.CL request smuggling"
     topic: http-request-smuggling
     difficulty: practitioner
     url: "https://portswigger.net/web-security/request-smuggling/advanced/lab-request-smuggling-h2-cl-request-smuggling"
 
-  - id: http-request-smuggling-p8
+  - id: http-request-smuggling-p13
     title: "HTTP/2 request smuggling via CRLF injection"
     topic: http-request-smuggling
     difficulty: practitioner
     url: "https://portswigger.net/web-security/request-smuggling/advanced/lab-request-smuggling-h2-request-smuggling-via-crlf-injection"
 
-  - id: http-request-smuggling-p9
+  - id: http-request-smuggling-p14
     title: "HTTP/2 request splitting via CRLF injection"
     topic: http-request-smuggling
     difficulty: practitioner
     url: "https://portswigger.net/web-security/request-smuggling/advanced/lab-request-smuggling-h2-request-splitting-via-crlf-injection"
 
-  - id: http-request-smuggling-p10
+  - id: http-request-smuggling-p15
     title: "CL.0 request smuggling"
     topic: http-request-smuggling
     difficulty: practitioner
-    url: "https://portswigger.net/web-security/request-smuggling/browser/cl-0/lab-cl-0-request-smuggling"
-
-  - id: http-request-smuggling-p11
-    title: "Exploiting HTTP request smuggling to perform web cache poisoning"
-    topic: http-request-smuggling
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/request-smuggling/exploiting/lab-perform-web-cache-poisoning"
-
-  - id: http-request-smuggling-p12
-    title: "Exploiting HTTP request smuggling to perform web cache deception"
-    topic: http-request-smuggling
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/request-smuggling/exploiting/lab-perform-web-cache-deception"
+    url: "https://portswigger.net/web-security/request-smuggling/browser/lab-cl-0-request-smuggling"
 
   - id: http-request-smuggling-e1
+    title: "Exploiting HTTP request smuggling to perform web cache poisoning"
+    topic: http-request-smuggling
+    difficulty: expert
+    url: "https://portswigger.net/web-security/request-smuggling/exploiting/lab-perform-web-cache-poisoning"
+
+  - id: http-request-smuggling-e2
+    title: "Exploiting HTTP request smuggling to perform web cache deception"
+    topic: http-request-smuggling
+    difficulty: expert
+    url: "https://portswigger.net/web-security/request-smuggling/exploiting/lab-perform-web-cache-deception"
+
+  - id: http-request-smuggling-e3
     title: "Bypassing access controls via HTTP/2 request tunnelling"
     topic: http-request-smuggling
     difficulty: expert
-    url: "https://portswigger.net/web-security/request-smuggling/advanced/request-tunnelling/lab-request-smuggling-h2-bypass-access-controls-via-request-tunnelling"
+    url: "https://portswigger.net/web-security/request-smuggling/advanced/lab-request-smuggling-h2-bypass-access-controls-via-request-tunnelling"
 
-  - id: http-request-smuggling-e2
-    title: "0.CL request smuggling"
+  - id: http-request-smuggling-e4
+    title: "Web cache poisoning via HTTP/2 request tunnelling"
     topic: http-request-smuggling
     difficulty: expert
-    url: "https://portswigger.net/web-security/request-smuggling/advanced/lab-request-smuggling-0cl-request-smuggling"
+    url: "https://portswigger.net/web-security/request-smuggling/advanced/lab-request-smuggling-h2-web-cache-poisoning-via-request-tunnelling"
 
-  - id: http-request-smuggling-e3
+  - id: http-request-smuggling-e5
     title: "Client-side desync"
     topic: http-request-smuggling
     difficulty: expert
-    url: "https://portswigger.net/web-security/request-smuggling/browser/client-side-desync/lab-client-side-desync"
+    url: "https://portswigger.net/web-security/request-smuggling/browser/lab-client-side-desync"
 
-  - id: http-request-smuggling-e4
-    title: "Browser cache poisoning via client-side desync"
-    topic: http-request-smuggling
-    difficulty: expert
-    url: "https://portswigger.net/web-security/request-smuggling/browser/client-side-desync/lab-browser-cache-poisoning-via-client-side-desync"
-
-  - id: http-request-smuggling-e5
+  - id: http-request-smuggling-e6
     title: "Server-side pause-based request smuggling"
     topic: http-request-smuggling
     difficulty: expert
-    url: "https://portswigger.net/web-security/request-smuggling/browser/pause-based-desync/lab-server-side-pause-based-request-smuggling"
+    url: "https://portswigger.net/web-security/request-smuggling/browser/lab-server-side-pause-based-request-smuggling"
 
   # ========================================================================
-  # WEB CACHE POISONING (13 labs: 3a, 7p, 3e)
+  # WEB CACHE POISONING (13 labs: 0a, 9p, 4e)
   # ========================================================================
-
-  - id: web-cache-poisoning-a1
-    title: "Web cache poisoning with an unkeyed header"
-    topic: web-cache-poisoning
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/web-cache-poisoning/exploiting-design-flaws/lab-web-cache-poisoning-with-an-unkeyed-header"
-
-  - id: web-cache-poisoning-a2
-    title: "Web cache poisoning with an unkeyed cookie"
-    topic: web-cache-poisoning
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/web-cache-poisoning/exploiting-design-flaws/lab-web-cache-poisoning-with-an-unkeyed-cookie"
-
-  - id: web-cache-poisoning-a3
-    title: "Web cache poisoning with multiple headers"
-    topic: web-cache-poisoning
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/web-cache-poisoning/exploiting-design-flaws/lab-web-cache-poisoning-with-multiple-headers"
 
   - id: web-cache-poisoning-p1
+    title: "Web cache poisoning with an unkeyed header"
+    topic: web-cache-poisoning
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/web-cache-poisoning/exploiting-design-flaws/lab-web-cache-poisoning-with-an-unkeyed-header"
+
+  - id: web-cache-poisoning-p2
+    title: "Web cache poisoning with an unkeyed cookie"
+    topic: web-cache-poisoning
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/web-cache-poisoning/exploiting-design-flaws/lab-web-cache-poisoning-with-an-unkeyed-cookie"
+
+  - id: web-cache-poisoning-p3
+    title: "Web cache poisoning with multiple headers"
+    topic: web-cache-poisoning
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/web-cache-poisoning/exploiting-design-flaws/lab-web-cache-poisoning-with-multiple-headers"
+
+  - id: web-cache-poisoning-p4
     title: "Targeted web cache poisoning using an unknown header"
     topic: web-cache-poisoning
     difficulty: practitioner
     url: "https://portswigger.net/web-security/web-cache-poisoning/exploiting-design-flaws/lab-web-cache-poisoning-targeted-using-an-unknown-header"
 
-  - id: web-cache-poisoning-p2
+  - id: web-cache-poisoning-p5
     title: "Web cache poisoning via an unkeyed query string"
     topic: web-cache-poisoning
     difficulty: practitioner
     url: "https://portswigger.net/web-security/web-cache-poisoning/exploiting-implementation-flaws/lab-web-cache-poisoning-unkeyed-query"
 
-  - id: web-cache-poisoning-p3
+  - id: web-cache-poisoning-p6
     title: "Web cache poisoning via an unkeyed query parameter"
     topic: web-cache-poisoning
     difficulty: practitioner
     url: "https://portswigger.net/web-security/web-cache-poisoning/exploiting-implementation-flaws/lab-web-cache-poisoning-unkeyed-param"
 
-  - id: web-cache-poisoning-p4
+  - id: web-cache-poisoning-p7
     title: "Parameter cloaking"
     topic: web-cache-poisoning
     difficulty: practitioner
     url: "https://portswigger.net/web-security/web-cache-poisoning/exploiting-implementation-flaws/lab-web-cache-poisoning-param-cloaking"
 
-  - id: web-cache-poisoning-p5
+  - id: web-cache-poisoning-p8
     title: "Web cache poisoning via a fat GET request"
     topic: web-cache-poisoning
     difficulty: practitioner
     url: "https://portswigger.net/web-security/web-cache-poisoning/exploiting-implementation-flaws/lab-web-cache-poisoning-fat-get"
 
-  - id: web-cache-poisoning-p6
+  - id: web-cache-poisoning-p9
     title: "URL normalization"
     topic: web-cache-poisoning
     difficulty: practitioner
     url: "https://portswigger.net/web-security/web-cache-poisoning/exploiting-implementation-flaws/lab-web-cache-poisoning-normalization"
 
-  - id: web-cache-poisoning-p7
+  - id: web-cache-poisoning-e1
     title: "Web cache poisoning to exploit a DOM vulnerability via a cache with strict cacheability criteria"
     topic: web-cache-poisoning
-    difficulty: practitioner
+    difficulty: expert
     url: "https://portswigger.net/web-security/web-cache-poisoning/exploiting-design-flaws/lab-web-cache-poisoning-to-exploit-a-dom-vulnerability-via-a-cache-with-strict-cacheability-criteria"
 
-  - id: web-cache-poisoning-e1
+  - id: web-cache-poisoning-e2
     title: "Combining web cache poisoning vulnerabilities"
     topic: web-cache-poisoning
     difficulty: expert
     url: "https://portswigger.net/web-security/web-cache-poisoning/exploiting-design-flaws/lab-web-cache-poisoning-combining-vulnerabilities"
 
-  - id: web-cache-poisoning-e2
+  - id: web-cache-poisoning-e3
     title: "Cache key injection"
     topic: web-cache-poisoning
     difficulty: expert
     url: "https://portswigger.net/web-security/web-cache-poisoning/exploiting-implementation-flaws/lab-web-cache-poisoning-cache-key-injection"
 
-  - id: web-cache-poisoning-e3
+  - id: web-cache-poisoning-e4
     title: "Internal cache poisoning"
     topic: web-cache-poisoning
     difficulty: expert
@@ -1627,7 +1621,7 @@ labs:
     title: "Basic password reset poisoning"
     topic: http-host-header
     difficulty: apprentice
-    url: "https://portswigger.net/web-security/host-header/exploiting/password-reset-poisoning/lab-host-header-basic-password-reset-poisoning"
+    url: "https://portswigger.net/web-security/host-header/exploiting/lab-host-header-basic-password-reset-poisoning"
 
   - id: http-host-header-a2
     title: "Host header authentication bypass"
@@ -1654,19 +1648,19 @@ labs:
     url: "https://portswigger.net/web-security/host-header/exploiting/lab-host-header-ssrf-via-flawed-request-parsing"
 
   - id: http-host-header-p4
-    title: "Password reset poisoning via dangling markup"
-    topic: http-host-header
-    difficulty: practitioner
-    url: "https://portswigger.net/web-security/host-header/exploiting/password-reset-poisoning/lab-host-header-password-reset-poisoning-via-dangling-markup"
-
-  - id: http-host-header-e1
     title: "Host validation bypass via connection state attack"
     topic: http-host-header
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/host-header/exploiting/lab-host-header-connection-state-attack"
+
+  - id: http-host-header-e1
+    title: "Password reset poisoning via dangling markup"
+    topic: http-host-header
     difficulty: expert
-    url: "https://portswigger.net/web-security/host-header/exploiting/lab-host-header-host-validation-bypass-via-connection-state-attack"
+    url: "https://portswigger.net/web-security/host-header/exploiting/lab-host-header-password-reset-poisoning-via-dangling-markup"
 
   # ========================================================================
-  # GRAPHQL (5 labs: 2a, 3p, 0e)
+  # GRAPHQL (5 labs: 1a, 4p, 0e)
   # ========================================================================
 
   - id: graphql-a1
@@ -1675,32 +1669,32 @@ labs:
     difficulty: apprentice
     url: "https://portswigger.net/web-security/graphql/lab-graphql-reading-private-posts"
 
-  - id: graphql-a2
+  - id: graphql-p1
     title: "Accidental exposure of private GraphQL fields"
     topic: graphql
-    difficulty: apprentice
-    url: "https://portswigger.net/web-security/graphql/lab-graphql-accidental-field-exposure"
+    difficulty: practitioner
+    url: "https://portswigger.net/web-security/graphql/lab-graphql-accidental-exposure-of-private-fields"
 
-  - id: graphql-p1
+  - id: graphql-p2
     title: "Finding a hidden GraphQL endpoint"
     topic: graphql
     difficulty: practitioner
     url: "https://portswigger.net/web-security/graphql/lab-graphql-find-the-endpoint"
 
-  - id: graphql-p2
+  - id: graphql-p3
     title: "Bypassing GraphQL brute force protections"
     topic: graphql
     difficulty: practitioner
     url: "https://portswigger.net/web-security/graphql/lab-graphql-brute-force-protection-bypass"
 
-  - id: graphql-p3
+  - id: graphql-p4
     title: "Performing CSRF exploits over GraphQL"
     topic: graphql
     difficulty: practitioner
     url: "https://portswigger.net/web-security/graphql/lab-graphql-csrf-via-graphql-api"
 
   # ========================================================================
-  # WEB LLM ATTACKS (4 labs: 1a, 3p, 0e)
+  # WEB LLM ATTACKS (4 labs: 1a, 2p, 1e)
   # ========================================================================
 
   - id: web-llm-attacks-a1
@@ -1721,8 +1715,8 @@ labs:
     difficulty: practitioner
     url: "https://portswigger.net/web-security/llm-attacks/lab-indirect-prompt-injection"
 
-  - id: web-llm-attacks-p3
+  - id: web-llm-attacks-e1
     title: "Exploiting insecure output handling in LLMs"
     topic: web-llm-attacks
-    difficulty: practitioner
+    difficulty: expert
     url: "https://portswigger.net/web-security/llm-attacks/lab-exploiting-insecure-output-handling-in-llms"

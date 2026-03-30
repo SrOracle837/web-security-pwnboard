@@ -18,42 +18,42 @@ topics:
     name: "SQL Injection"
     category: server-side
     starter: true
-    labs: { apprentice: 6, practitioner: 10, expert: 2 }
+    labs: { apprentice: 2, practitioner: 16, expert: 0 }
     description: "Manipulate SQL queries to access or modify database data"
 
   authentication:
     name: "Authentication"
     category: server-side
     starter: true
-    labs: { apprentice: 4, practitioner: 8, expert: 2 }
+    labs: { apprentice: 3, practitioner: 9, expert: 2 }
     description: "Bypass login mechanisms and exploit authentication flaws"
 
   path-traversal:
     name: "Path Traversal"
     category: server-side
     starter: true
-    labs: { apprentice: 3, practitioner: 3, expert: 0 }
+    labs: { apprentice: 1, practitioner: 5, expert: 0 }
     description: "Access files outside the intended directory"
 
   command-injection:
     name: "Command Injection"
     category: server-side
     starter: true
-    labs: { apprentice: 2, practitioner: 3, expert: 0 }
+    labs: { apprentice: 1, practitioner: 4, expert: 0 }
     description: "Execute arbitrary OS commands on the server"
 
   information-disclosure:
     name: "Information Disclosure"
     category: server-side
     starter: true
-    labs: { apprentice: 2, practitioner: 3, expert: 0 }
+    labs: { apprentice: 4, practitioner: 1, expert: 0 }
     description: "Find sensitive data leaked by the application"
 
   access-control:
     name: "Access Control"
     category: server-side
     starter: true
-    labs: { apprentice: 5, practitioner: 7, expert: 1 }
+    labs: { apprentice: 9, practitioner: 4, expert: 0 }
     description: "Escalate privileges and bypass authorization checks"
 
   # ── SERVER-SIDE (Unlockable) ──────────────────────────────
@@ -81,7 +81,7 @@ topics:
     starter: false
     prerequisites:
       - { topic: file-upload, min_apprentice: 2 }
-    labs: { apprentice: 2, practitioner: 3, expert: 1 }
+    labs: { apprentice: 1, practitioner: 4, expert: 1 }
     description: "Exploit time-of-check to time-of-use vulnerabilities"
 
   ssrf:
@@ -90,7 +90,7 @@ topics:
     starter: false
     prerequisites:
       - { topic: access-control, min_apprentice: 3 }
-    labs: { apprentice: 2, practitioner: 4, expert: 1 }
+    labs: { apprentice: 2, practitioner: 3, expert: 2 }
     description: "Make the server send requests to unintended locations"
 
   xxe:
@@ -99,7 +99,7 @@ topics:
     starter: false
     prerequisites:
       - { topic: sql-injection, min_apprentice: 3 }
-    labs: { apprentice: 3, practitioner: 5, expert: 1 }
+    labs: { apprentice: 2, practitioner: 6, expert: 1 }
     description: "Exploit XML parsers to read files and perform SSRF"
 
   nosql-injection:
@@ -120,7 +120,7 @@ topics:
       - { topic: authentication, min_apprentice: 3 }
       - { topic: access-control, min_apprentice: 3 }
     prerequisite_mode: "any_3_server_side_topics"
-    labs: { apprentice: 2, practitioner: 3, expert: 0 }
+    labs: { apprentice: 1, practitioner: 3, expert: 1 }
     description: "Find and exploit vulnerabilities in REST APIs"
 
   web-cache-deception:
@@ -137,7 +137,7 @@ topics:
     name: "Cross-Site Scripting (XSS)"
     category: client-side
     starter: true
-    labs: { apprentice: 9, practitioner: 17, expert: 4 }
+    labs: { apprentice: 9, practitioner: 15, expert: 6 }
     description: "Inject malicious scripts into web pages"
 
   csrf:
@@ -146,7 +146,7 @@ topics:
     starter: false
     prerequisites:
       - { topic: xss, min_apprentice: 3 }
-    labs: { apprentice: 4, practitioner: 7, expert: 1 }
+    labs: { apprentice: 1, practitioner: 11, expert: 0 }
     description: "Force users to perform unintended actions"
 
   cors:
@@ -155,7 +155,7 @@ topics:
     starter: false
     prerequisites:
       - { topic: csrf, min_apprentice: 3 }
-    labs: { apprentice: 1, practitioner: 2, expert: 0 }
+    labs: { apprentice: 2, practitioner: 1, expert: 0 }
     description: "Exploit misconfigured CORS policies"
 
   clickjacking:
@@ -164,7 +164,7 @@ topics:
     starter: false
     prerequisites:
       - { topic: csrf, min_apprentice: 3 }
-    labs: { apprentice: 2, practitioner: 3, expert: 0 }
+    labs: { apprentice: 3, practitioner: 2, expert: 0 }
     description: "Trick users into clicking hidden UI elements"
 
   dom-based:
@@ -173,7 +173,7 @@ topics:
     starter: false
     prerequisites:
       - { topic: xss, min_apprentice: 5 }
-    labs: { apprentice: 2, practitioner: 4, expert: 1 }
+    labs: { apprentice: 0, practitioner: 5, expert: 2 }
     description: "Exploit client-side JavaScript DOM manipulation"
 
   websockets:
@@ -193,7 +193,7 @@ topics:
     prerequisites:
       - { topic: command-injection, min_apprentice: 2 }
     min_level: 8
-    labs: { apprentice: 2, practitioner: 4, expert: 1 }
+    labs: { apprentice: 0, practitioner: 5, expert: 2 }
     description: "Inject into server-side template engines for RCE"
 
   insecure-deserialization:
@@ -203,7 +203,7 @@ topics:
     prerequisites:
       - { topic: ssti, min_apprentice: 2 }
     min_level: 8
-    labs: { apprentice: 3, practitioner: 5, expert: 2 }
+    labs: { apprentice: 1, practitioner: 6, expert: 3 }
     description: "Exploit deserialization to achieve code execution"
 
   oauth:
@@ -212,7 +212,7 @@ topics:
     starter: false
     prerequisites:
       - { topic: authentication, min_apprentice: 3 }
-    labs: { apprentice: 2, practitioner: 3, expert: 1 }
+    labs: { apprentice: 1, practitioner: 4, expert: 1 }
     description: "Exploit OAuth flows and misconfigurations"
 
   jwt:
@@ -231,7 +231,7 @@ topics:
     prerequisites:
       - { topic: dom-based, min_apprentice: 2 }
     min_level: 8
-    labs: { apprentice: 3, practitioner: 5, expert: 2 }
+    labs: { apprentice: 0, practitioner: 9, expert: 1 }
     description: "Pollute JavaScript object prototypes for exploitation"
 
   http-request-smuggling:
@@ -241,7 +241,7 @@ topics:
     prerequisites:
       - { topic: ssrf, min_apprentice: 2 }
     min_level: 8
-    labs: { apprentice: 5, practitioner: 12, expert: 5 }
+    labs: { apprentice: 0, practitioner: 15, expert: 6 }
     description: "Exploit HTTP parsing discrepancies between servers"
 
   web-cache-poisoning:
@@ -252,7 +252,7 @@ topics:
       - { topic: xss, min_apprentice: 5 }
       - { topic: web-cache-deception, min_apprentice: 1 }
     min_level: 8
-    labs: { apprentice: 3, practitioner: 7, expert: 3 }
+    labs: { apprentice: 0, practitioner: 9, expert: 4 }
     description: "Poison web caches to deliver malicious responses"
 
   http-host-header:
@@ -270,7 +270,7 @@ topics:
     starter: false
     prerequisites:
       - { topic: api-testing, min_apprentice: 2 }
-    labs: { apprentice: 2, practitioner: 3, expert: 0 }
+    labs: { apprentice: 1, practitioner: 4, expert: 0 }
     description: "Exploit GraphQL introspection and query flaws"
 
   web-llm-attacks:
@@ -280,5 +280,5 @@ topics:
     prerequisites: []
     prerequisite_mode: "any_5_topics_at_practitioner"
     min_level: 8
-    labs: { apprentice: 1, practitioner: 3, expert: 0 }
+    labs: { apprentice: 1, practitioner: 2, expert: 1 }
     description: "Exploit LLM integrations in web applications"

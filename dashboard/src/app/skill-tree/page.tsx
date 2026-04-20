@@ -20,6 +20,8 @@ interface TopicDef {
   description: string;
   labs: { apprentice: number; practitioner: number; expert: number };
   prerequisites?: { topic: string; min_apprentice: number }[];
+  prerequisite_mode?: string;
+  min_level?: number;
 }
 
 interface APIData {
@@ -204,18 +206,60 @@ export default function SkillTreePage() {
     const topics = skillTree.topics;
     let idx = 0;
 
+    // Helper: how many apprentice labs completed in a topic
+    const apprenticeDone = (topicId: string) =>
+      player.progress[topicId]?.apprentice?.completed?.length ?? 0;
+
+    // Helper: is a topic unlocked based on prereqs and level?
+    function isUnlocked(def: TopicDef): boolean {
+      if (def.starter) return true;
+
+      // Level gate
+      if (def.min_level && player.player.level < def.min_level) return false;
+
+      // Special prerequisite modes
+      if (def.prerequisite_mode === "any_3_server_side_topics") {
+        const count = Object.entries(topics).filter(
+          ([tid, t]) => t.category === "server-side" && apprenticeDone(tid) >= 3
+        ).length;
+        return count >= 3;
+      }
+      if (def.prerequisite_mode === "any_5_topics_at_practitioner") {
+        const count = Object.entries(topics).filter(
+          ([tid]) => (player.progress[tid]?.practitioner?.completed?.length ?? 0) >= 1
+        ).length;
+        return count >= 5;
+      }
+
+      // Standard prerequisite list — all must be met
+      if (def.prerequisites && def.prerequisites.length > 0) {
+        return def.prerequisites.every(
+          (pr) => apprenticeDone(pr.topic) >= pr.min_apprentice
+        );
+      }
+
+      // No prereqs and not a starter — treat as unlocked
+      return true;
+    }
+
     const nodes: Node[] = Object.entries(topics).map(([id, def]) => {
       const p = player.progress[id];
       const completed = (p?.apprentice?.completed?.length ?? 0) + (p?.practitioner?.completed?.length ?? 0) + (p?.expert?.completed?.length ?? 0);
       const total = def.labs.apprentice + def.labs.practitioner + def.labs.expert;
-      const prereqNames = (def.prerequisites || []).map((pr) => topics[pr.topic]?.name || pr.topic);
+      const prereqNames = (def.prerequisites || []).map((pr) => {
+        const have = apprenticeDone(pr.topic);
+        const name = topics[pr.topic]?.name || pr.topic;
+        return have >= pr.min_apprentice
+          ? `${name} ✓`
+          : `${name} (${have}/${pr.min_apprentice})`;
+      });
       idx++;
 
       return {
         id, type: "topic", position: positions[id] || { x: 0, y: 0 },
         data: {
           label: def.name, category: def.category, completed, total,
-          locked: !def.starter, description: def.description, prereqNames,
+          locked: !isUnlocked(def), description: def.description, prereqNames,
           floatDelay: idx,
         } as TopicNodeData,
       };
